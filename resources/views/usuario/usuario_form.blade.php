@@ -42,6 +42,33 @@
                     <span id="cpf_checagem" class="checagem"></span> 
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="grupo_usuario" class="form-label">Grupo*</label>
+                    <select class="form-select" aria-label="Default select example">
+                    <option value="-1"></option>
+                    @foreach ($grupos_usuario as $key => $grupo_usuario) 
+                        <option value="<?php echo $grupo_usuario->id_grupo_usuario; ?>" 
+                            <?php echo (@$usuario->id_usuario_grupo !== NULL && $grupo_usuario->id_grupo_usuario == @$usuario->id_usuario_grupo) ? 'selected' : '';?> 
+                        > 
+                            <?php  echo $grupo_usuario->descricao; ?>
+                        </option>
+                    @endforeach 
+                    </select>
+                    <span id="grupo_usuario_checagem" class="checagem"></span> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="ativo" class="form-label">Ativo</label>
+                    <select class="form-select" aria-label="Default select example">
+                        <option value="-1"></option>
+                        <option value="1" <?php echo (@$usuario->ativo !== NULL && $usuario->ativo == 1) ? 'selected': '';?> >ATIVO</option>
+                        <option value="0" <?php echo (@$usuario->ativo !== NULL && $usuario->ativo == 0) ? 'selected': '';?>>INATIVO</option>
+                    </select>
+                    <span id="ativo_checagem" class="checagem"></span> 
+                </div>
+            </div>
             <div class="col-12">
                 <a class="btn btn-secondary" href="/usuarios" role="button" style="width: 150px;">Voltar</a>
                 <a id="btn_salvar" class="btn btn-blue" style="width: 150px;">Salvar</a>
@@ -91,15 +118,15 @@
             $("#nome_checagem").html("");
             $("#sobrenome_checagem").html("");
             $("#dt_nascimento_checagem").html("");
+            $("#grupo_usuario_checagem").html("");
 
             if(typeof $('#cpf').val() == 'undefined' || $('#cpf').val() == "")
             {   
                 $("#cpf_checagem").html("obrigatório.");
                 $("#cpf_checagem").css("display", "block");
                 erros++;
+
             }else{
-                
-                console.log(valida_cpf($('#cpf').val()));
 
                 let validacao_cpf = valida_cpf($('#cpf').val());
 
@@ -131,8 +158,6 @@
                 $("#dt_nascimento_checagem").css("display", "block");
                 erros++;
             }else{
-
-                console.log('resultsdo_cauclua_idade: '+calculaIdade($('#dt_nascimento').val()));
                 
                 let idade = calculaIdade($('#dt_nascimento').val());
 
@@ -163,6 +188,20 @@
                     $("#dt_nascimento_checagem").css("display", "block");
                     erros++;
                 }
+            } 
+
+            if(typeof $('#grupo_usuario').val() == 'undefined' || $('#grupo_usuario').val() == "" || $('#grupo_usuario').val() == "-1")
+            {
+                $("#grupo_usuario_checagem").html("obrigatório.");
+                $("#grupo_usuario_checagem").css("display", "block");
+                erros++;
+            }
+
+            if(typeof $('#ativo').val() == 'undefined' || $('#ativo').val() == "" || $('#ativo').val() == "-1")
+            {
+                $("#ativo_checagem").html("obrigatório.");
+                $("#ativo_checagem").css("display", "block");
+                erros++;
             } 
 
             return (erros == 0) ? true : false;

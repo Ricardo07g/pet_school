@@ -6,11 +6,6 @@
 
     <script>
         $( document ).ready(function() {
-
-            function remover_registro(id_usuario)
-            {
-                console.log("registro_a_ser_removido: "+$this);
-            }
         
             $(".btn_remover_registro").on("click",function(){
                 showModalRemove('Atenção!', 'Deseja realmente remover este usuário?', "Remover", "Cancelar", () => {
@@ -95,7 +90,7 @@
             <thead>
                 <tr>
                 <th scope="col">Nome</th>
-                <th scope="col">Cargo</th>
+                <th scope="col">Grupo</th>
                 <th scope="col">Status</th>
                 <th scope="col"></th>
                 </tr>
@@ -104,8 +99,8 @@
             @foreach ($usuarios as $key => $usuario)
                 <tr>
                     <td><?php echo $usuario->nome.' '.$usuario->sobrenome;?></td>
-                    <td>Administrador</td>
-                    <td>status</td>
+                    <td><?php echo $usuario->grupo_descricao; ?></td>
+                    <td><?php echo ($usuario->ativo == 1) ? 'ATIVO' : 'INATIVO';?></td>
                     <td class="colum_options">
                         <span style="margin-right: 5px;" >
                             <a type="button" class="btn btn-primary" href="/usuario?i=<?php echo $usuario->id_usuario;?>">

@@ -7,40 +7,45 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Models\Usuario;
 
-class UsuarioController extends Controller
+class FuncionarioController extends Controller
 {
     public function index()
     {
-        $UsuarioClass = Usuario::all();
+        $FuncionarioClass = Funcionario::all();
     }
 
-    public function lista_usuarios()
+    public function lista_funcionarios()
     {
 
         $routes = array(
             array('index'=> 'Inicio', 'route'=>'/inicio'),
-            array('index'=> 'Listagem de usuários', 'route'=>'/usuarios'),
+            array('index'=> 'Listagem de funcionários', 'route'=>'/funcionarios'),
         );
             
         try {
-            //$dados_usuarios = DB::table('usuarios')->get();
-            $dados_usuarios = DB::table('usuarios')
-            ->selectRaw('
-                usuarios.id_usuario,
-                usuarios.nome,
-                usuarios.sobrenome,
-                usuarios.ativo,
-                usuario_grupo.descricao AS grupo_descricao
-            ')
-            ->join('usuario_grupo', 'usuario_grupo.id_grupo_usuario', '=', 'usuarios.id_usuario_grupo')
-            ->get();
+
+            $dados_cargos = DB::table('cargo')->get();
+
+            $dados_funcionarios = DB::table('funcionario')
+                        ->selectRaw('
+                            funcionario.id_funcionario,
+                            funcionario.ativo,
+                            cargo.descricao AS cargo,
+                            pessoa.nome,
+                            pessoa.sobrenome,
+                            pessoa.dt_nascimento,
+                            pessoa.cpf
+                        ')
+                        ->join('pessoa', 'pessoa.id_pessoa', '=', 'funcionario.id_pessoa')
+                        ->join('cargo', 'cargo.id_cargo', '=', 'funcionario.id_cargo')
+                        ->get();
         } catch (\Throwable $e) {
             throw $e->getMessage();
         }
         
-        $payload = array('routes' => $routes, 'usuarios' => $dados_usuarios);
+        $payload = array('routes' => $routes, 'funcionarios' => $dados_funcionarios, 'cargos' => $dados_cargos);
         
-        return view('/usuario/usuario_listar',$payload);
+        return view('/funcionario/funcionario_listar',$payload);
     }
 
 
@@ -48,29 +53,22 @@ class UsuarioController extends Controller
     {
         $routes = array(
             array('index'=> 'Inicio', 'route'=>'/inicio'),
-            array('index'=> 'Listagem de usuários', 'route'=>'/usuarios'),
-            array('index'=> (request('i')) ? 'Editar usuário' :'Cadastrar usuário', 'route'=>'/usuario')
+            array('index'=> 'Listagem de funcionários', 'route'=>'/funcionários'),
+            array('index'=> (request('i')) ? 'Editar funcionário' :'Cadastrar funcionário', 'route'=>'/funcionario')
         );
     
         $dados_usuario = NULL;
     
         if(request('i') != NULL)
         {
-            try 
-            {
-                $dados_usuario = DB::table('usuarios')
-                        ->join('usuario_grupo', 'usuario_grupo.id_grupo_usuario', '=', 'usuarios.id_usuario_grupo')
-                        ->where('id_usuario', request('i'))
-                        ->first();
-
+            try {
+                $dados_usuario = DB::table('funcionarios')->where('id_usuario', request('i'))->first();
             } catch (\Throwable $e) {
                 throw $e->getMessage();
             }
         }
-
-        $dados_usuario_grupo = $dados_usuarios = DB::table('usuario_grupo')->get();
     
-        $payload = array('id' => request('i'), 'routes' => $routes, 'usuario' => $dados_usuario, 'grupos_usuario' => $dados_usuario_grupo);
+        $payload = array('id' => request('i'), 'routes' => $routes, 'funcionario' => $dados_usuario);
     
         return view('/usuario/usuario_form',$payload);
     }

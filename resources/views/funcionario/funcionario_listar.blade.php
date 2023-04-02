@@ -4,94 +4,63 @@
 @section('content')
     <div class="titulo-pagina">
         <div>
-            <h2 class="mb-4">Listagem de usuários</h2>
+            <h2 class="mb-4">Listagem de Funcionários</h2>
         </div>
-        <div>
+        <div class="itens-titulo-pagina">
+            <div style="margin-right: 10px; width: 200px;">
+                <select class="form-select form-select" aria-label=".form-select-lg example" style="text-align: center;">
+                    <option value="1" selected>Ativos</option>
+                    <option value="2">Inativos</option>
+                    <option value="-1">Todos</option>
+                </select>
+            </div>
             <div class="btn-group " role="group" style="margin-right: 10px; width: 200px;">
                 <button id="btnGroupDrop1" type="button" class="btn btn-blue dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 Opções &nbsp
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                <li><a class="dropdown-item" href="/usuario">Novo usuário</a></li>
+                <li><a class="dropdown-item" href="/usuario">Novo Funcionário</a></li>
                 </ul>
             </div>
         </div>
     </div>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-            <th scope="col">Nome</th>
-            <th scope="col">Cargo</th>
-            <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Ricardo Pereira</td>
-                <td>Administrador</td>
-                <td class="colum_options">
-                    <span style="margin-right: 5px;" >
-                        <a type="button" class="btn btn-primary" href="/usuario?i=1">
-                            <span class="bi bi-brush"></span> 
-                        </a>
-                    </span>
-                    <span>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        <span class="bi bi-trash"></span>
-                        </button>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td>Rayane Gabrielle vieira lemos</td>
-                <td>Coordenador</td>
-                <td class="colum_options">
-                    <span style="margin-right: 5px;" >
-                        <a type="button" class="btn btn-primary" href="/usuario?i=2">
-                            <span class="bi bi-brush"></span> 
-                        </a>
-                    </span>
-                    <span>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        <span class="bi bi-trash"></span>
-                        </button>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td>Bento Paulo</td>
-                <td>Instrutor</td>
-                <td class="colum_options">
-                    <span style="margin-right: 5px;" >
-                        <a type="button" class="btn btn-primary" href="/usuario?i=3">
-                            <span class="bi bi-brush"></span> 
-                        </a>
-                    </span>
-                    <span>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        <span class="bi bi-trash"></span>
-                        </button>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td>Vincent Paulo</td>
-                <td>Instrutor</td>
-                <td class="colum_options">
-                    <span style="margin-right: 5px;" >
-                        <a type="button" class="btn btn-primary" href="/usuario?i=4">
-                            <span class="bi bi-brush"></span> 
-                        </a>
-                    </span>
-                    <span>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        <span class="bi bi-trash"></span>
-                        </button>
-                    </span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    @if(count($funcionarios) > 0)
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Cargo</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach ($funcionarios as $key => $funcionario)
+                <tr>
+                    <td><?php echo $funcionario->nome.' '.$funcionario->sobrenome;?></td>
+                    <td><?php echo $funcionario->cargo; ?></td>
+                    <td><?php echo ($funcionario->ativo == 1) ? 'ATIVO' : 'INATIVO';?></td>
+                    <td class="colum_options">
+                        <span style="margin-right: 5px;" >
+                            <a type="button" class="btn btn-primary" href="/usuario?i=<?php echo $funcionario->id_funcionario;?>">
+                                <span class="bi bi-brush"></span> 
+                            </a>
+                        </span>
+                        <span class="btn_remover_registro" id="<?php echo $funcionario->id_funcionario;?>">
+                            <button type="button" class="btn btn-danger">
+                            <span class="bi bi-trash"></span>
+                            </button>
+                        </span>
+                    </td>
+                </tr>
+            @endforeach 
+            </tbody>
+        </table>
+    @else
+        <div id="infongMessage" class="alert alert-info alert-block" style="text-align:center"> 
+            <strong>Não existem Funcionários a serem listados</strong>
+        </div>
+    @endif
 
 
 <!-- Modal -->

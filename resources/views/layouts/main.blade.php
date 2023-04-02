@@ -45,7 +45,7 @@
                     <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Administração</a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
                     <li>
-                        <a href="/usuarios">Usuários</a>
+                        <a href="/usuarios">Usuários do sistema</a>
                     </li>
                     <li>
                         <a href="/funcionarios">Funcionários</a>
