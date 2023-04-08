@@ -14,7 +14,7 @@ class UsuarioController extends Controller
         $UsuarioClass = Usuario::all();
     }
 
-    public function lista_usuarios(Request $request)
+    public function lista_usuarios()
     {
 
         $routes = array(
