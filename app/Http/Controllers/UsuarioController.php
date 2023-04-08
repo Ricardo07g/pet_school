@@ -88,10 +88,12 @@ class UsuarioController extends Controller
 
             $usuario = new Usuario;
 
-            $usuario->nome          = $request->nome;
-            $usuario->sobrenome     = $request->sobrenome;
-            $usuario->cpf           = $request->cpf;
-            $usuario->dt_nascimento = $request->dt_nascimento;
+            $usuario->nome             = $request->nome;
+            $usuario->sobrenome        = $request->sobrenome;
+            $usuario->cpf              = $request->cpf;
+            $usuario->dt_nascimento    = $request->dt_nascimento;
+            $usuario->id_usuario_grupo = $request->grupo_usuario;
+            $usuario->ativo            = 1;
     
             $usuario->save();
             DB::commit();
@@ -113,16 +115,18 @@ class UsuarioController extends Controller
             Usuario::where('id_usuario', '=', $id_usuario)->update([  
                     'nome' => $request->nome,
                     'sobrenome' => $request->sobrenome,
-                    'dt_nascimento' => $request->dt_nascimento
+                    'dt_nascimento' => $request->dt_nascimento,
+                    'ativo' => $request->ativo,
+                    'id_usuario_grupo' => $request->grupo_usuario
                 ]);
-            
+
             DB::commit();
 
             return redirect('/usuarios')->with('success','Dados do usuário atualizados com sucesso!');
 
         }catch (\Throwable $e) {
             DB::rollback();
-            return redirect('/usuarios')->with('error', 'Erro! Não foi possível atualizar os dados do usuário. Por favor, procure o administrador do sistema.');
+            return redirect('/usuarios')->with('error', 'Erro! Não foi possível atualizar os dados do usuário. Por favor, procure o administrador do sistema.'.'\n'.$e->getMessage());
         }
     }
 

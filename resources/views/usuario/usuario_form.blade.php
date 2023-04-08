@@ -45,7 +45,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <label for="grupo_usuario" class="form-label">Grupo*</label>
-                    <select class="form-select" aria-label="Default select example">
+                    <select id='grupo_usuario' name='grupo_usuario' class="form-select">
                     <option value="-1"></option>
                     @foreach ($grupos_usuario as $key => $grupo_usuario) 
                         <option value="<?php echo $grupo_usuario->id_grupo_usuario; ?>" 
@@ -59,15 +59,25 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
-                    <label for="ativo" class="form-label">Ativo</label>
-                    <select class="form-select" aria-label="Default select example">
-                        <option value="-1"></option>
-                        <option value="1" <?php echo (@$usuario->ativo !== NULL && $usuario->ativo == 1) ? 'selected': '';?> >ATIVO</option>
-                        <option value="0" <?php echo (@$usuario->ativo !== NULL && $usuario->ativo == 0) ? 'selected': '';?>>INATIVO</option>
-                    </select>
-                    <span id="ativo_checagem" class="checagem"></span> 
-                </div>
+                @if(@$_GET['i'] == NULL)
+                    <div class="col-md-6">
+                        <label for="ativo" class="form-label">Ativo</label>
+                        <select id='ativo' name='ativo' class="form-select" disabled>
+                            <option value="1" selected>ATIVO</option>
+                        </select>
+                        <span id="ativo_checagem" class="checagem"></span> 
+                    </div>
+                @else
+                    <div class="col-md-6">
+                        <label for="ativo" class="form-label">Ativo</label>
+                        <select id='ativo' name='ativo' class="form-select">
+                            <option value="-1"></option>
+                            <option value="1" <?php echo (@$usuario->ativo !== NULL && $usuario->ativo == 1) ? 'selected': '';?> >ATIVO</option>
+                            <option value="0" <?php echo (@$usuario->ativo !== NULL && $usuario->ativo == 0) ? 'selected': '';?>>INATIVO</option>
+                        </select>
+                        <span id="ativo_checagem" class="checagem"></span> 
+                    </div>
+                @endif
             </div>
             <div class="col-12">
                 <a class="btn btn-secondary" href="/usuarios" role="button" style="width: 150px;">Voltar</a>
