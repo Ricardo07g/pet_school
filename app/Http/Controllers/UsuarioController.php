@@ -14,7 +14,7 @@ class UsuarioController extends Controller
         $UsuarioClass = Usuario::all();
     }
 
-    public function lista_usuarios()
+    public function lista_usuarios(Request $request)
     {
 
         $routes = array(
@@ -23,7 +23,11 @@ class UsuarioController extends Controller
         );
             
         try {
-            //$dados_usuarios = DB::table('usuarios')->get();
+
+            $parametro = (@$_GET['a'] === NULL || @$_GET['a'] === '' || !in_array(@$_GET['a'],[-1,0,1])) ? 1 : @$_GET['a'];
+
+            $array_campos =  ($parametro == -1) ? [0,1] : [$parametro];
+
             $dados_usuarios = DB::table('usuarios')
             ->selectRaw('
                 usuarios.id_usuario,
@@ -33,12 +37,14 @@ class UsuarioController extends Controller
                 usuario_grupo.descricao AS grupo_descricao
             ')
             ->join('usuario_grupo', 'usuario_grupo.id_grupo_usuario', '=', 'usuarios.id_usuario_grupo')
+            ->whereIn('usuarios.ativo',$array_campos)
             ->get();
+
         } catch (\Throwable $e) {
             throw $e->getMessage();
         }
         
-        $payload = array('routes' => $routes, 'usuarios' => $dados_usuarios);
+        $payload = array('routes' => $routes, 'usuarios' => $dados_usuarios, 'parametro_busca' => $parametro);
         
         return view('/usuario/usuario_listar',$payload);
     }

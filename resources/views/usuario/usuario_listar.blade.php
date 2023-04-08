@@ -17,8 +17,6 @@
                         data: {id: $(this).attr('id'), _token: '{{csrf_token()}}'},
                         success: function (data) {
 
-                            console.log("response_remover_usuario: "+data);
-
                             $('#staticBackdrop').remove();
                             $('.modal-backdrop').remove();
                             
@@ -31,6 +29,7 @@
                                 }).then((value) => {
                                     location.reload();
                                 }).catch(swal.noop);
+
                             }else{
                                
                                 swal({
@@ -38,7 +37,6 @@
                                     text: 'Não foi possível remover este usuário. \n Por favor, procure o administrador do sistema.',
                                     type:'error'
                                 }) 
-                                
                             }
                         },
                         error: function (data, textStatus, errorThrown) {
@@ -58,7 +56,19 @@
                     return true;
                 });
             });
-    
+
+            $('#select_ativos').on("change",function(){
+                
+                var url = window.location.href;    
+
+                let value = $("#select_ativos").val();
+                
+                if(typeof value != 'undefined')
+                {
+                    location.href = URL_add_parameter(url, 'a', value);
+                }  
+            });
+
         });
     </script>
 
@@ -68,10 +78,10 @@
         </div>
         <div class="itens-titulo-pagina">
             <div style="margin-right: 10px; width: 200px;">
-                <select class="form-select form-select" aria-label=".form-select-lg example" style="text-align: center;">
-                    <option value="1" selected>Ativos</option>
-                    <option value="2">Inativos</option>
-                    <option value="-1">Todos</option>
+                <select id='select_ativos' name='select_ativos' class="form-select form-select" aria-label=".form-select-lg example" style="text-align: center;">
+                    <option value="-1" <?php echo ($parametro_busca == -1) ? 'selected' : '';?> >Todos</option>    
+                    <option value="1"  <?php echo ($parametro_busca == 1) ? 'selected' : '';?>  >Ativos</option>
+                    <option value="0"  <?php echo ($parametro_busca == 0) ? 'selected' : '';?>  >Inativos</option>    
                 </select>
             </div>
             <div class="btn-group " role="group" style="margin-right: 10px; width: 200px;">

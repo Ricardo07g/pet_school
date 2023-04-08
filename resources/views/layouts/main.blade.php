@@ -16,6 +16,7 @@
 <!--===============================================================================================-->
 
 <!--===============================================================================================-->
+    <script src="system/js/functions.js"></script>    
     <script src="system/js/bootstrap.bundle.min.js"></script>
     <script src="system/js/jquery.min.js"></script>
     
