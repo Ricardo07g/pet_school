@@ -49,11 +49,11 @@ class FuncionarioController extends Controller
     }
 
 
-    public function formulario_usuario()
+    public function formulario_funcionario()
     {
         $routes = array(
             array('index'=> 'Inicio', 'route'=>'/inicio'),
-            array('index'=> 'Listagem de funcionários', 'route'=>'/funcionários'),
+            array('index'=> 'Listagem de funcionários', 'route'=>'/funcionarios'),
             array('index'=> (request('i')) ? 'Editar funcionário' :'Cadastrar funcionário', 'route'=>'/funcionario')
         );
     
@@ -73,7 +73,7 @@ class FuncionarioController extends Controller
         return view('/usuario/usuario_form',$payload);
     }
 
-    public function cadastra_usuario(Request $request)
+    public function cadastra_funcionario(Request $request)
     {
         $routes = array(
             array('index'=> 'Inicio', 'route'=>'/inicio'),
@@ -102,7 +102,7 @@ class FuncionarioController extends Controller
         }
     }
 
-    public function edita_usuario(Request $request, $id_usuario)
+    public function edita_funcionario(Request $request, $id_usuario)
     {
         try
         {
@@ -124,11 +124,11 @@ class FuncionarioController extends Controller
         }
     }
 
-    public function remove_usuario(Request $request)
+    public function remove_funcionario(Request $request)
     {
         $routes = array(
             array('index'=> 'Inicio', 'route'=>'/inicio'),
-            array('index'=> 'Listagem de usuários', 'route'=>'/usuarios'),
+            array('index'=> 'Listagem de funcionários', 'route'=>'/funcionarios'),
         );
         $retorno = array();
         try

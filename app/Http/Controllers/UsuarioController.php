@@ -49,7 +49,6 @@ class UsuarioController extends Controller
         return view('/usuario/usuario_listar',$payload);
     }
 
-
     public function formulario_usuario()
     {
         $routes = array(

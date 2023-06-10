@@ -9,9 +9,9 @@
         <div class="itens-titulo-pagina">
             <div style="margin-right: 10px; width: 200px;">
                 <select class="form-select form-select" aria-label=".form-select-lg example" style="text-align: center;">
-                    <option value="1" selected>Ativos</option>
-                    <option value="2">Inativos</option>
-                    <option value="-1">Todos</option>
+                    <option value="-1">Todos</option>    
+                    <option value="1">Ativos</option>
+                    <option value="0">Inativos</option>    
                 </select>
             </div>
             <div class="btn-group " role="group" style="margin-right: 10px; width: 200px;">
@@ -42,7 +42,7 @@
                     <td><?php echo ($funcionario->ativo == 1) ? 'ATIVO' : 'INATIVO';?></td>
                     <td class="colum_options">
                         <span style="margin-right: 5px;" >
-                            <a type="button" class="btn btn-primary" href="/usuario?i=<?php echo $funcionario->id_funcionario;?>">
+                            <a type="button" class="btn btn-primary" href="/funcionario?i=<?php echo $funcionario->id_funcionario;?>">
                                 <span class="bi bi-brush"></span> 
                             </a>
                         </span>
@@ -81,4 +81,72 @@
     </div>
   </div>
 </div>
+
+<script>
+    $( document ).ready(function() {
+    
+        $(".btn_remover_registro").on("click",function(){
+            showModalRemove('Atenção!', 'Deseja realmente remover este Funcionário?', "Remover", "Cancelar", () => {
+                $(".modal-success-btn").prop('disabled', true);
+
+                $.ajax({
+                    type: "POST",
+                    url: '/funcionario/remove',
+                    data: {id: $(this).attr('id'), _token: '{{csrf_token()}}'},
+                    success: function (data) {
+
+                        $('#staticBackdrop').remove();
+                        $('.modal-backdrop').remove();
+                        
+                        if(data.status ==  "sucesso")
+                        {   
+                            swal({
+                                icon:'success',
+                                text:"Funcionário removido com sucesso!",
+                                type:'success'
+                            }).then((value) => {
+                                location.reload();
+                            }).catch(swal.noop);
+
+                        }else{
+                            
+                            swal({
+                                icon: 'error',
+                                text: 'Não foi possível remover este funcionário. \n Por favor, procure o administrador do sistema.',
+                                type:'error'
+                            }) 
+                        }
+                    },
+                    error: function (data, textStatus, errorThrown) {
+                        $('#staticBackdrop').remove();
+                        $('.modal-backdrop').remove();
+                        swal({
+                                icon:'error',
+                                title: 'Oops...',
+                                text:"Algo não funcionou corretamente. \n Por favor, procure o administrador do sistema.",
+                                type:'error'
+                        })
+                    },
+                });
+
+                $(".modal-success-btn").prop('disabled', false);
+
+                return true;
+            });
+        });
+
+        $('#select_ativos').on("change",function(){
+            
+            var url = window.location.href;    
+
+            let value = $("#select_ativos").val();
+            
+            if(typeof value != 'undefined')
+            {
+                location.href = URL_add_parameter(url, 'a', value);
+            }  
+        });
+
+    });
+</script>
 @endsection
