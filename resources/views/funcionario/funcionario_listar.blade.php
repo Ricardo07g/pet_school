@@ -8,10 +8,10 @@
         </div>
         <div class="itens-titulo-pagina">
             <div style="margin-right: 10px; width: 200px;">
-                <select class="form-select form-select" aria-label=".form-select-lg example" style="text-align: center;">
-                    <option value="-1">Todos</option>    
-                    <option value="1">Ativos</option>
-                    <option value="0">Inativos</option>    
+                <select id='select_ativos' name='select_ativos' class="form-select form-select" aria-label=".form-select-lg example" style="text-align: center;">
+                    <option value="-1" <?php echo ($parametro_busca == -1) ? 'selected' : '';?> >Todos</option>    
+                    <option value="1"  <?php echo ($parametro_busca == 1) ? 'selected' : '';?>  >Ativos</option>
+                    <option value="0"  <?php echo ($parametro_busca == 0) ? 'selected' : '';?>  >Inativos</option>    
                 </select>
             </div>
             <div class="btn-group " role="group" style="margin-right: 10px; width: 200px;">
@@ -19,7 +19,7 @@
                 Opções &nbsp
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                <li><a class="dropdown-item" href="/usuario">Novo Funcionário</a></li>
+                <li><a class="dropdown-item" href="/funcionario">Novo Funcionário</a></li>
                 </ul>
             </div>
         </div>

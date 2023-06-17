@@ -31,6 +31,7 @@ Route::post('/usuario/remove', [UsuarioController::class, 'remove_usuario']);
 
 /* ROTAS FUNCIONÁRIOS */
 Route::get('/funcionarios', [FuncionarioController::class, 'lista_funcionarios']);
+Route::get('/funcionario', [FuncionarioController::class, 'formulario_funcionario']);
 
 /*
 Route::get('/funcionarios', function () {

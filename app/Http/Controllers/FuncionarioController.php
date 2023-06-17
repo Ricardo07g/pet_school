@@ -24,6 +24,10 @@ class FuncionarioController extends Controller
             
         try {
 
+            $parametro = (@$_GET['a'] === NULL || @$_GET['a'] === '' || !in_array(@$_GET['a'],[-1,0,1])) ? 1 : @$_GET['a'];
+            
+            $array_campos =  ($parametro == -1) ? [0,1] : [$parametro];
+
             $dados_cargos = DB::table('cargo')->get();
 
             $dados_funcionarios = DB::table('funcionario')
@@ -38,12 +42,18 @@ class FuncionarioController extends Controller
                         ')
                         ->join('pessoa', 'pessoa.id_pessoa', '=', 'funcionario.id_pessoa')
                         ->join('cargo', 'cargo.id_cargo', '=', 'funcionario.id_cargo')
+                        ->whereIn('funcionario.ativo',$array_campos)
                         ->get();
         } catch (\Throwable $e) {
             throw $e->getMessage();
         }
         
-        $payload = array('routes' => $routes, 'funcionarios' => $dados_funcionarios, 'cargos' => $dados_cargos);
+        $payload = array(
+                'routes' => $routes,
+                'funcionarios' => $dados_funcionarios,
+                'cargos' => $dados_cargos,
+                'parametro_busca' => $parametro
+            );
         
         return view('/funcionario/funcionario_listar',$payload);
     }
@@ -57,20 +67,33 @@ class FuncionarioController extends Controller
             array('index'=> (request('i')) ? 'Editar funcionário' :'Cadastrar funcionário', 'route'=>'/funcionario')
         );
     
-        $dados_usuario = NULL;
+        $dados_funcionario = NULL;
     
         if(request('i') != NULL)
         {
             try {
-                $dados_usuario = DB::table('funcionarios')->where('id_usuario', request('i'))->first();
+                $dados_funcionario = DB::table('funcionario')
+                ->selectRaw('
+                    pessoa.cpf,
+                    CONCAT(pessoa.nome, " ", pessoa.sobrenome) AS nome_completo,
+                    pessoa.dt_nascimento,
+                    funcionario.id_cargo,
+                    funcionario.ativo
+                ')
+                ->join('pessoa', 'pessoa.id_pessoa', '=', 'funcionario.id_pessoa')
+                ->join('cargo', 'cargo.id_cargo', '=', 'funcionario.id_cargo')
+                ->where('id_funcionario', request('i'))->first();
+
             } catch (\Throwable $e) {
                 throw $e->getMessage();
             }
         }
+
+        $dados_funcionario_cargo = DB::table('cargo')->get();
     
-        $payload = array('id' => request('i'), 'routes' => $routes, 'funcionario' => $dados_usuario);
+        $payload = array('id' => request('i'), 'routes' => $routes, 'funcionario' => $dados_funcionario, 'cargos_usuario' => $dados_funcionario_cargo);
     
-        return view('/usuario/usuario_form',$payload);
+        return view('/funcionario/funcionario_form',$payload);
     }
 
     public function cadastra_funcionario(Request $request)

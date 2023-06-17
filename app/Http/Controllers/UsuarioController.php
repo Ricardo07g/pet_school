@@ -67,13 +67,13 @@ class UsuarioController extends Controller
                         ->join('usuario_grupo', 'usuario_grupo.id_grupo_usuario', '=', 'usuarios.id_usuario_grupo')
                         ->where('id_usuario', request('i'))
                         ->first();
-
+                
             } catch (\Throwable $e) {
                 throw $e->getMessage();
             }
         }
 
-        $dados_usuario_grupo = $dados_usuarios = DB::table('usuario_grupo')->get();
+        $dados_usuario_grupo =  DB::table('usuario_grupo')->get();
     
         $payload = array('id' => request('i'), 'routes' => $routes, 'usuario' => $dados_usuario, 'grupos_usuario' => $dados_usuario_grupo);
     
