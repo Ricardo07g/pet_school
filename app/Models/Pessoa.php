@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Pessoa extends Model
-{
+{   protected $table = 'pessoa';
     use HasFactory;
 }

@@ -140,10 +140,7 @@ class FuncionarioController extends Controller
 
         }catch (\Throwable $e) {
             DB::rollback();
-            //'Erro! Não foi possível inserir funcionário. Por favor, procure o administrador do sistema.'
-            return redirect('/funcionarios')->with('error',$e->getMessage());
-
-            //SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'ativo' cannot be null (SQL: insert into `funcionario` (`id_pessoa`, `id_cargo`, `ativo`, `updated_at`, `created_at`) values (?, 5, ?, 2023-07-23 03:57:13, 2023-07-23 03:57:13))
+            return redirect('/funcionarios')->with('error', 'Erro! Não foi possível inserir funcionário. Por favor, procure o administrador do sistema.');
         }
     }
 

@@ -49,6 +49,9 @@
                         <a href="/usuarios">Usuários do sistema</a>
                     </li>
                     <li>
+                        <a href="/pessoas">Pessoas</a>
+                    </li>
+                    <li>
                         <a href="/funcionarios">Funcionários</a>
                     </li>
                     <li>

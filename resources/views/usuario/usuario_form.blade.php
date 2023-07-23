@@ -86,7 +86,7 @@
 
             $("#nome").on("change", function(){
                 $(this).val($(this).val().toUpperCase());
-                var regexp = /[^a-zA-Z^\s+]/g;
+                var regexp = /[^A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ^\s+]/g;
 
                 if(this.value.match(regexp))
                 {
@@ -96,7 +96,7 @@
 
             $("#sobrenome").on("change", function(){
                 $(this).val($(this).val().toUpperCase());
-                var regexp = /[^a-zA-Z^\s+]/g;
+                var regexp = /[^A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ^\s+]/g;
 
                 if(this.value.match(regexp))
                 {

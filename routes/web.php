@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\PessoaController;
 use App\Http\Controllers\FuncionarioController;
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,13 @@ Route::get('/usuario', [UsuarioController::class, 'formulario_usuario']);
 Route::post('/usuario/novo', [UsuarioController::class, 'cadastra_usuario']);
 Route::post('/usuario/edita/{id}', [UsuarioController::class, 'edita_usuario']);
 Route::post('/usuario/remove', [UsuarioController::class, 'remove_usuario']);
+
+/* ROTAS PESSOAS */
+Route::get('/pessoas', [PessoaController::class, 'lista_pessoas']);
+Route::get('/pessoa', [PessoaController::class, 'formulario_pessoa']);
+Route::post('/pessoa/novo', [PessoaController::class, 'cadastra_pessoa']);
+Route::post('/pessoa/edita/{id}', [PessoaController::class, 'edita_pessoa']);
+Route::post('/pessoa/remove', [PessoaController::class, 'remove_pessoa']);
 
 /* ROTAS FUNCIONÁRIOS */
 Route::get('/funcionarios', [FuncionarioController::class, 'lista_funcionarios']);

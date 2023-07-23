@@ -99,16 +99,6 @@
 
             <div class="row">
                 @if(@$_GET['i'] == NULL)
-                   
-                <!--
-                    <div class="col-md-6 invisivel">
-                        <label for="ativo" class="form-label">Ativo</label>
-                        <select id='ativo' name='ativo' class="form-select" disabled>
-                            <option value="1" selected>ATIVO</option>
-                        </select>
-                        <span id="ativo_checagem" class="checagem"></span> 
-                    </div>
-                -->
                     <input type="hidden" id="ativo" name="ativo" value="1">
                 @else
                     <div class="col-md-6">
