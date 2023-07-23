@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use App\Models\Usuario;
+use App\Models\Funcionario;
+use APP\Models\Pessoa;
 
 class FuncionarioController extends Controller
 {
@@ -68,6 +69,7 @@ class FuncionarioController extends Controller
         );
     
         $dados_funcionario = NULL;
+        $dados_pessoas = array();
     
         if(request('i') != NULL)
         {
@@ -87,11 +89,28 @@ class FuncionarioController extends Controller
             } catch (\Throwable $e) {
                 throw $e->getMessage();
             }
+        }else{
+            $dados_pessoas = DB::table('pessoa')
+            ->selectRaw('
+                pessoa.id_pessoa,
+                CONCAT(pessoa.nome, " ", pessoa.sobrenome) AS nome_completo,
+                pessoa.cpf,
+                pessoa.dt_nascimento
+            ')
+            ->leftJoin('funcionario', 'pessoa.id_pessoa', '=', 'funcionario.id_pessoa')
+            ->whereNull('funcionario.id_pessoa')
+            ->get();
         }
 
         $dados_funcionario_cargo = DB::table('cargo')->get();
     
-        $payload = array('id' => request('i'), 'routes' => $routes, 'funcionario' => $dados_funcionario, 'cargos_usuario' => $dados_funcionario_cargo);
+        $payload = array(
+                'id' => request('i'), 
+                'routes' => $routes,
+                'funcionario' => $dados_funcionario,
+                'cargos_usuario' => $dados_funcionario_cargo,
+                'dados_pessoas' => $dados_pessoas
+            );
     
         return view('/funcionario/funcionario_form',$payload);
     }
@@ -100,50 +119,53 @@ class FuncionarioController extends Controller
     {
         $routes = array(
             array('index'=> 'Inicio', 'route'=>'/inicio'),
-            array('index'=> 'Listagem de usuários', 'route'=>'/usuarios'),
+            array('index'=> 'Listagem de funcionários', 'route'=>'/funcionarios'),
         );
 
         try
         {
             DB::beginTransaction();
 
-            $usuario = new Usuario;
+            $funcionario = new Funcionario;
 
-            $usuario->nome          = $request->nome;
-            $usuario->sobrenome     = $request->sobrenome;
-            $usuario->cpf           = $request->cpf;
-            $usuario->dt_nascimento = $request->dt_nascimento;
-    
-            $usuario->save();
+            $funcionario->id_pessoa  = $request->id_pessoa;
+            $funcionario->id_cargo   = $request->cargo_funcionario;
+            $funcionario->ativo      = $request->ativo;
+            
+            $funcionario->save();
+
             DB::commit();
 
-            return redirect('/usuarios')->with('success','Usuário inserido com sucesso!');
+            return redirect('/funcionarios')->with('success','Funcionario inserido com sucesso!');
 
         }catch (\Throwable $e) {
             DB::rollback();
-            return redirect('/usuarios')->with('error','Erro! Não foi possível inserir usuário. Por favor, procure o administrador do sistema.');
+            //'Erro! Não foi possível inserir funcionário. Por favor, procure o administrador do sistema.'
+            return redirect('/funcionarios')->with('error',$e->getMessage());
+
+            //SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'ativo' cannot be null (SQL: insert into `funcionario` (`id_pessoa`, `id_cargo`, `ativo`, `updated_at`, `created_at`) values (?, 5, ?, 2023-07-23 03:57:13, 2023-07-23 03:57:13))
         }
     }
 
-    public function edita_funcionario(Request $request, $id_usuario)
+    public function edita_funcionario(Request $request, $id_funcionario)
     {
         try
         {
             DB::beginTransaction();
 
-            Usuario::where('id_usuario', '=', $id_usuario)->update([  
-                    'nome' => $request->nome,
-                    'sobrenome' => $request->sobrenome,
-                    'dt_nascimento' => $request->dt_nascimento
+            Funcionario::where('id_funcionario', '=', $id_funcionario)->update([  
+                    'id_pessoa' => $request->id_pessoa,
+                    'id_cargo'  => $request->cargo_funcionario,
+                    'ativo'     => $request->ativo
                 ]);
             
             DB::commit();
 
-            return redirect('/usuarios')->with('success','Dados do usuário atualizados com sucesso!');
+            return redirect('/funcionarios')->with('success','Dados do funcionário atualizados com sucesso!');
 
         }catch (\Throwable $e) {
             DB::rollback();
-            return redirect('/usuarios')->with('error', 'Erro! Não foi possível atualizar os dados do usuário. Por favor, procure o administrador do sistema.');
+            return redirect('/funcionarios')->with('error', 'Erro! Não foi possível atualizar os dados do funcionário. Por favor, procure o administrador do sistema.');
         }
     }
 
@@ -157,7 +179,7 @@ class FuncionarioController extends Controller
         try
         {
             DB::beginTransaction();
-            Usuario::where('id_usuario', '=', $request->id)->delete();
+            Funcionario::where('id_funcionario', '=', $request->id)->delete();
             DB::commit();
 
             $retorno = ['status' => 'sucesso', 'msg'=>'Removido com sucesso', 'id' => $request->id];
@@ -165,7 +187,7 @@ class FuncionarioController extends Controller
         }catch (\Throwable $e) {
             DB::rollback();
 
-            $retorno = ['status' => 'erro', 'msg'=>'Erro! Não foi possível remover usuário. Por favor, procure o administrador do sistema.', 'id' => $request->id];
+            $retorno = ['status' => 'erro', 'msg'=>'Erro! Não foi possível remover funcionário. Por favor, procure o administrador do sistema.', 'id' => $request->id];
         }finally{
 
             return response()->json($retorno);

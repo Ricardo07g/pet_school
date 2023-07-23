@@ -8387,3 +8387,16 @@ div .content-page form div.row{
   color: red;
   display: none;
 }
+
+.invisivel{
+  display: none;
+}
+
+
+.div_alert{
+  border: 1px solid #dc7605;
+  padding: 10px;
+  color: white;
+  text-align: center;
+  background-color: #ff9d07f2;
+}

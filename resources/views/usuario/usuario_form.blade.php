@@ -6,13 +6,6 @@
         <div>
             <h2 class="mb-4">Formulário do usuário</h2>
         </div>
-        <!--
-        <div>
-            <div class="btn-group" role="group" style="margin-right: 10px; width: 200px;">
-                <a class="btn btn-blue" href="/usuarios" role="button">Voltar</a>
-            </div>
-        </div>
-        -->
     </div>
     
     <div class="content-page">
