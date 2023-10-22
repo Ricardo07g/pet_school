@@ -13,31 +13,31 @@
             @csrf
             <div class="row">
             <div class="col-md-6">
-                    <label for="inputNome" class="form-label">Nome*</label>
+                    <label for="inputNome" class="form-label">Nome*:</label>
                     <input type="text" class="form-control" id="nome" name="nome" value="<?php echo !empty($_GET['i']) ? $usuario->nome : NULL ; ?>" pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256">
                     <span id="nome_checagem" class="checagem"></span> 
                 </div>
                 <div class="col-md-6">
-                    <label for="inputSobrenome" class="form-label">Sobrenome*</label>
+                    <label for="inputSobrenome" class="form-label">Sobrenome*:</label>
                     <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="<?php echo !empty($_GET['i']) ? $usuario->sobrenome : NULL ; ?>" pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256">
                     <span id="sobrenome_checagem" class="checagem"></span> 
                 </div>
             </div>
+
             <div class="row">
-                <div class="col-md-6">
-                    <label for="inputDt_nascimento" class="form-label">Data de Nascimento*</label>
+                <div class="col-md-3">
+                    <label for="inputDt_nascimento" class="form-label">Data de Nascimento*:</label>
                     <input type="date" class="form-control" id="dt_nascimento" name="dt_nascimento" value="<?php echo !empty($_GET['i']) ? $usuario->dt_nascimento : NULL ; ?>">
                     <span id="dt_nascimento_checagem" class="checagem"></span> 
                 </div>
-                <div class="col-md-6">
-                    <label for="inputCPF" class="form-label">CPF*</label>
+
+                <div class="col-md-3">
+                    <label for="inputCPF" class="form-label">CPF*:</label>
                     <input type="text" class="form-control" id="cpf" name="cpf" placeholder="" value="<?php echo !empty($_GET['i']) ? $usuario->cpf : NULL ; ?>" <?php echo !empty($_GET['i']) ? 'disabled' : ''; ?> >
                     <span id="cpf_checagem" class="checagem"></span> 
                 </div>
-            </div>
-            <div class="row">
                 <div class="col-md-6">
-                    <label for="grupo_usuario" class="form-label">Grupo*</label>
+                    <label for="grupo_usuario" class="form-label">Grupo*:</label>
                     <select id='grupo_usuario' name='grupo_usuario' class="form-select">
                     <option value="-1"></option>
                     @foreach ($grupos_usuario as $key => $grupo_usuario) 
@@ -51,18 +51,48 @@
                     <span id="grupo_usuario_checagem" class="checagem"></span> 
                 </div>
             </div>
+
+            <div class="row">
+                 <div class="col-md-6">
+                    <label for="inputEmail" class="form-label">E-mail*:</label>
+                    <input type="text" class="form-control" id="email" name="email" value="<?php echo !empty($_GET['i']) ? $usuario->email : NULL ; ?>">
+                    <span id="email_checagem" class="checagem"></span> 
+                </div>
+
+                <div class="col-md-6">
+                    @if(@$_GET['i'] == NULL)
+                      <label class="form-label">Senha:*</label>
+                        <div class="input-group">
+                            <input class="form-control password" id="senha" class="block" type="password" name="senha" value="" />
+                            <span class="input-group-text togglePassword" id="">
+                                <i data-feather="eye" style="cursor: pointer"></i>
+                            </span>
+                        </div>
+                        <span id="senha_checagem" class="checagem"></span> 
+                    @else
+                     <label class="form-label">Nova senha</label>
+                      <div class="input-group">
+                          <input class="form-control password" id="nova_senha" class="block" type="password" name="nova_senha" value="" />
+                          <span class="input-group-text togglePassword" id="">
+                              <i data-feather="eye" style="cursor: pointer"></i>
+                          </span>
+                      </div>
+                      <span id="nova_senha_checagem" class="checagem"></span> 
+                    @endif
+                </div>
+            </div>
             <div class="row">
                 @if(@$_GET['i'] == NULL)
-                    <div class="col-md-6">
-                        <label for="ativo" class="form-label">Ativo</label>
+                    <div class="col-md-2" style="display:none;">
+                        <label for="ativo" class="form-label">Situação:</label>
                         <select id='ativo' name='ativo' class="form-select" disabled>
                             <option value="1" selected>ATIVO</option>
                         </select>
                         <span id="ativo_checagem" class="checagem"></span> 
                     </div>
                 @else
-                    <div class="col-md-6">
-                        <label for="ativo" class="form-label">Ativo</label>
+                    <div class="col-md-2">
+                        <label for="ativo" class="form-label">Situação:</label>
                         <select id='ativo' name='ativo' class="form-select">
                             <option value="-1"></option>
                             <option value="1" <?php echo (@$usuario->ativo !== NULL && $usuario->ativo == 1) ? 'selected': '';?> >ATIVO</option>
@@ -105,9 +135,33 @@
             });
 
             $('#btn_salvar').click(function(){
+                
+                spinner_loading(true);
+
                 if(validacao_campos_formulario() == true)
-                {
+                {   console.log('validou');
                     $('#form-usuario').submit();
+                }
+
+                spinner_loading(false);
+            });
+
+            feather.replace({ 'aria-hidden': 'true' });
+
+            $(".togglePassword").click(function (e) {
+                  
+                e.preventDefault();
+                var type = $(this).parent().parent().find(".password").attr("type");
+
+                if(type == "password")
+                {
+                  $("svg.feather.feather-eye").replaceWith(feather.icons["eye-off"].toSvg());
+                  $(this).parent().parent().find(".password").attr("type","text");
+
+                }else if(type == "text"){
+
+                  $("svg.feather.feather-eye-off").replaceWith(feather.icons["eye"].toSvg());
+                  $(this).parent().parent().find(".password").attr("type","password");
                 }
             });
 
@@ -122,6 +176,9 @@
             $("#sobrenome_checagem").html("");
             $("#dt_nascimento_checagem").html("");
             $("#grupo_usuario_checagem").html("");
+            $("#senha_checagem").html("");
+            $("#nova_senha_checagem").html("");
+            $("#email_checagem").html("");
 
             if(typeof $('#cpf').val() == 'undefined' || $('#cpf').val() == "")
             {   
@@ -207,6 +264,113 @@
                 erros++;
             } 
 
+            if(typeof $('#email').val() == 'undefined' || $('#email').val() == "" )
+            {
+                $("#email_checagem").html("obrigatório.");
+                $("#email_checagem").css("display", "block");
+                erros++;
+            }else{
+
+                const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i;
+
+                console.log('Regex email: ', emailRegex.test($('#email').val()));
+
+                if(emailRegex.test($('#email').val()) == true)
+                {
+                    try
+                    {   
+                        var id_usuario = '<?php echo (!empty($_GET['i'])) ? $_GET['i'] : "-1";?>';
+                        var email_usuario = $('#email').val();
+
+                        $.ajax({
+                            type: "POST",
+                            url: '/usuario/verifica_email',
+                            data: {id: id_usuario, email: email_usuario,  _token: '{{csrf_token()}}'},
+                            success: function (data) {
+
+                                console.log('request sucesso: ',data);
+
+                                if(data.status ==  "sucesso")
+                                {   
+                                    if(data.flag == "false" )
+                                    {
+                                        $("#email_checagem").html("E-mail já cadastrado em outro usuario");
+                                        $("#email_checagem").css("display", "block");
+                                        erros++; 
+                                    }
+
+                                }else{
+
+                                    $("#email_checagem").html("Não foi possível verificar E-mail. Procure o administrador do sistema.");
+                                    $("#email_checagem").css("display", "block");
+                                    erros++; 
+                                }
+                            },
+                            error: function (data, textStatus, errorThrown) {
+                                
+                                console.log('request erro: ',data);
+
+                                $("#email_checagem").html("Não foi possível verificar E-mail. Procure o administrador do sistema.");
+                                $("#email_checagem").css("display", "block");
+                                 erros++; 
+                            },
+                        });
+
+                    }catch(e){
+
+                        $("#email_checagem").html("Não foi possível verificar E-mail. Procure o administrador do sistema.");
+                        $("#email_checagem").css("display", "block");
+                         erros++; 
+                    }
+
+                }else{
+                    $("#email_checagem").html("E-mail inválido.");
+                    $("#email_checagem").css("display", "block");
+                     erros++; 
+                }
+            }
+
+            @if(@$_GET['i'] == NULL)
+
+                if(typeof $('#senha').val() !== 'undefined' && $('#senha').val() == "")
+                {
+                    $("#senha_checagem").html("obrigatório.");
+                    $("#senha_checagem").css("display", "block");
+                    erros++;
+
+                }else{
+
+                    let forca = valida_forca_senha($('#senha').val());
+
+                    console.log("forca da senha :", forca);
+
+                    if(forca.forca  < 4)
+                    {
+                        $("#senha_checagem").html(forca.mensagem);
+                        $("#senha_checagem").css("display", "block");
+                        erros++;   
+                    }
+                }
+
+            @else
+
+                if(typeof $('#nova_senha').val() == 'undefined' || $('#nova_senha').val() !== "")
+                {
+                    let forca = valida_forca_senha($('#nova_senha').val());
+
+                     console.log("forca da senha :", forca);
+
+                    if(forca.forca  < 4)
+                    {
+                        $("#nova_senha_checagem").html(forca.mensagem);
+                        $("#nova_senha_checagem").css("display", "block");
+                        erros++;   
+                    }
+                } 
+
+            @endif
+
+            console.log("erros : ",erros);
             return (erros == 0) ? true : false;
         }
 
@@ -277,5 +441,43 @@
                 if (Resto != parseInt(strCPF.substring(10, 11) ) ) return 0;
                 return 1;
         }
+
+        function valida_forca_senha(senha)
+        {
+            var forca = 0;
+            var mensagens = [];
+
+            if (senha.length >= 8)
+            {
+                forca += 1;
+            } else {
+                mensagens.push('<br> - A senha deve ter pelo menos 8 caracteres. ');
+            }
+
+            if (senha.match(/[0-9]/))
+            {
+                forca += 1;
+            } else {
+                mensagens.push('<br> -  A senha deve conter pelo menos um número.');
+            }
+
+            if (senha.match(/[a-z]/) && senha.match(/[A-Z]/))
+            {
+                forca += 1;
+            } else {
+                mensagens.push('<br> -  A senha deve conter letras maiúsculas e minúsculas.');
+            }
+
+            if (senha.match(/[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/))
+            {
+                forca += 1;
+            } else {
+                mensagens.push('<br> -  A senha deve conter caracteres especiais.');
+            }
+
+            return {forca: forca, mensagem: mensagens};
+        }
+
+
     </script> 
 @endsection

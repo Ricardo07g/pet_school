@@ -29,27 +29,46 @@
 				<div class="login100-pic js-tilt" data-tilt>
 					<img src="login/images/img-02.webp" alt="IMG">
 				</div>
-
-				<form class="login100-form validate-form">
-
-					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
-						<input class="input100" type="text" name="email" placeholder="Usuário">
+				<form class="login100-form validate-form" action="/login/auth" method="POST">
+				@csrf
+					<div class="wrap-input100 validate-input" data-validate = "Campo está vazio ou  possui um formato inválido.">
+						<input 
+							class="input100"
+							type="text"
+							id="email" 
+							name="email" 
+							placeholder="E-mail" 
+							value ="demonstracao@gmail.com" 
+						>
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-envelope" aria-hidden="true"></i>
 						</span>
 					</div>
 
-					<div class="wrap-input100 validate-input" data-validate = "Password is required">
-						<input class="input100" type="password" name="pass" placeholder="*******">
+					<div class="wrap-input100 validate-input" data-validate = "obrigatório">
+						<input 
+							class="input100" 
+							type="password" 
+							id="senha" 
+							name="senha" 
+							placeholder="*******" 
+							value ="Demonstracao@123" 
+						>
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-lock" aria-hidden="true"></i>
 						</span>
 					</div>
+
+					@if ($message = Session::get('error'))
+					    <div class="alert alert-danger">
+					        {{ $message }}
+					    </div>
+					@endif
 					
 					<div class="container-login100-form-btn">
-						<button onclick="login()" class="login100-form-btn" href="/inicio">
+						<button type="button" id="btn_submit_form_login" class="login100-form-btn">
 							Entrar
 						</button>
 					</div>

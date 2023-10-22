@@ -465,3 +465,8 @@ iframe {
     opacity: 1;
   }
 }
+
+.checagem{
+  color: red;
+  display: none;
+}

@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'usuariosGuard' => [ // Nome da sua guarda personalizada
+            'driver' => 'session', // Pode ser 'session' ou 'token' dependendo das suas necessidades
+            'provider' => 'usuarios', // Nome do provedor de autenticação personalizado
+        ],
     ],
 
     /*
@@ -62,7 +66,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Usuario::class,
         ],
 
         // 'users' => [
