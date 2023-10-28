@@ -9,6 +9,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\PessoaController;
 use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConfiguracoesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -35,7 +36,15 @@ Route::middleware(['unauthenticated'])->group(function () {
     Route::get('/inicio', [EventController::class, 'inicio'])->name('protegida.inicio');
 
     /* ROTAS DE AUTENTICAÇÃO */
-    Route::get('/logout', [AuthController::class, 'logout']);
+    Route::get('/logout', [AuthController::class, 'logout'])->name('protegida.logout');
+
+    /* ROTAS DE CONFIGURAÇÃO */
+    Route::get('/configuracoes',[ConfiguracoesController::class, 'lista_configuracoes'])->name('protegida.configuracoes');
+    Route::get('/grupos_usuario',[ConfiguracoesController::class, 'lista_grupos_usuario'])->name('protegida.config_grupos_usuario');
+    Route::get('/grupos_usuario_form',[ConfiguracoesController::class, 'formulario_grupos_usuario'])->name('protegida.grupos_usuario_form');
+    Route::post('/grupos_usuario/novo', [ConfiguracoesController::class, 'cadastra_grupo_usuario'])->name('protegida.grupo_usuario_novo');
+    Route::post('/grupos_usuario/edita/{id}', [ConfiguracoesController::class, 'edita_grupo_usuario'])->name('protegida.grupo_usuario_edita');
+    Route::post('/grupos_usuario/remove', [ConfiguracoesController::class, 'remove_grupo_usuario'])->name('protegida.grupo_usuario_remove');
 
     /* ROTAS USUÁRIOS */
     Route::get('/usuarios', [UsuarioController::class, 'lista_usuarios'])->name('protegida.usuarios');

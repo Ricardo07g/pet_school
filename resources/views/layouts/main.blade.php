@@ -57,7 +57,7 @@
                         <a href="/funcionarios">Funcionários</a>
                     </li>
                     <li>
-                        <a href="#">Configurações</a>
+                        <a href="/configuracoes">Configurações</a>
                     </li>
                     </ul>
                 </li>
@@ -87,7 +87,7 @@
             -->
 
                  <li>
-                    <a href="/logout">Logout</a>
+                    <a href="/logout">Logout &nbsp;<i class="bi bi-box-arrow-right"></i></a>
                 </li>
 
             </ul>
@@ -99,9 +99,9 @@
                         Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib.com</a>
                         -->
 
-                    @auth
+                  
                         {{auth()->user()->name}}
-                    @endauth
+                   
 
                     </p>
                 </div>

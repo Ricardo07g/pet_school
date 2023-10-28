@@ -11,7 +11,7 @@
     <div class="content-page">
         @if(!isset($id) && count($dados_pessoas) == 0)
         <div class="div_alert">
-            Atenção! Todas as pessoas disponíveis já estão registradas como funcionário.
+            Atenção! Todas as pessoas disponíveis já foram registradas como funcionário.
         </div>
         @endif
         <form class="row g-3" id="form-funcionario" action="<?php echo !empty($_GET['i']) ? '/funcionario/edita/'.$_GET['i'].'' : '/funcionario/novo';?>" method="POST">
