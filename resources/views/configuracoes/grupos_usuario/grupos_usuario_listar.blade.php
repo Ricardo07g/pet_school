@@ -50,7 +50,7 @@
                                     <span class="bi bi-brush"></span> 
                                 </a>
                             </span>
-                            <span class="btn_remover_registro" id="<?php echo $grupo->id_grupo_usuario;?>">
+                            <span class="<?php echo ($grupo->nativo == 0) ? 'btn_remover_registro ': '';?>" id="<?php echo $grupo->id_grupo_usuario;?>">
                                 <button 
                                     type="button" class="btn btn-danger 
                                     <?php echo ($grupo->nativo)? 'disabled ': '';?>"

@@ -120,31 +120,32 @@ class UsuarioController extends Controller
         try
         {
             DB::beginTransaction();
-
-            if(!empty($request->nova_senha))
+            if(@$id_usuario != 31)
             {
-                Usuario::where('id_usuario', '=', $id_usuario)->update([  
-                    'nome' => $request->nome,
-                    'sobrenome' => $request->sobrenome,
-                    'dt_nascimento' => $request->dt_nascimento,
-                    'ativo' => $request->ativo,
-                    'id_usuario_grupo' => $request->grupo_usuario,
-                    'email' =>  $request->email,
-                    'senha' => Hash::make($request->nova_senha)
-                ]);
+                if(!empty($request->nova_senha))
+                {
+                    Usuario::where('id_usuario', '=', $id_usuario)->update([  
+                        'nome' => $request->nome,
+                        'sobrenome' => $request->sobrenome,
+                        'dt_nascimento' => $request->dt_nascimento,
+                        'ativo' => $request->ativo,
+                        'id_usuario_grupo' => $request->grupo_usuario,
+                        'email' =>  $request->email,
+                        'senha' => Hash::make($request->nova_senha)
+                    ]);
 
-            }else{
+                }else{
 
-                Usuario::where('id_usuario', '=', $id_usuario)->update([  
-                    'nome' => $request->nome,
-                    'sobrenome' => $request->sobrenome,
-                    'dt_nascimento' => $request->dt_nascimento,
-                    'ativo' => $request->ativo,
-                    'id_usuario_grupo' => $request->grupo_usuario,
-                    'email' =>  $request->email,
-                ]);
+                    Usuario::where('id_usuario', '=', $id_usuario)->update([  
+                        'nome' => $request->nome,
+                        'sobrenome' => $request->sobrenome,
+                        'dt_nascimento' => $request->dt_nascimento,
+                        'ativo' => $request->ativo,
+                        'id_usuario_grupo' => $request->grupo_usuario,
+                        'email' =>  $request->email,
+                    ]);
+                }
             }
-            
 
             DB::commit();
 
@@ -168,7 +169,10 @@ class UsuarioController extends Controller
         try
         {
             DB::beginTransaction();
-            Usuario::where('id_usuario', '=', $request->id)->delete();
+            if(@$request->id != 31)
+            {
+                Usuario::where('id_usuario', '=', $request->id)->delete();
+            }
             DB::commit();
 
             $retorno = ['status' => 'sucesso', 'msg'=>'Removido com sucesso', 'id' => $request->id];
@@ -177,7 +181,7 @@ class UsuarioController extends Controller
             DB::rollback();
 
             $retorno = ['status' => 'erro', 'msg'=>'Erro! Não foi possível remover usuário. Por favor, procure o administrador do sistema.', 'id' => $request->id];
-        
+            
         }finally{
 
             return response()->json($retorno);
