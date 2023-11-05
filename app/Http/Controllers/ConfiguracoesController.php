@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Models\GrupoUsuario;
+use App\Models\CargoFuncionario;
 
 class ConfiguracoesController extends Controller
 {
@@ -63,13 +64,13 @@ class ConfiguracoesController extends Controller
         return view('/configuracoes/grupos_usuario/grupos_usuario_listar',$payload);
     }
 
-     public function formulario_grupos_usuario()
+    public function formulario_grupos_usuario()
     {
         $routes = array(
             array('index'=> 'Inicio', 'route'=>'/inicio'),
             array('index'=> 'Configurações', 'route'=>'/configuracoes'),
             array('index'=> 'Grupos de usuário', 'route'=>'/grupos_usuario'),
-            array('index'=> (request('i')) ? 'Editar' :'Novo', 'route'=>'/configuracoes/grupos_usuario/grupos_usuario_listar')
+            array('index'=> (request('i')) ? 'Editar' :'Novo', 'route'=>'#')
         );
     
         $grupo_usuario = NULL;
@@ -204,6 +205,151 @@ class ConfiguracoesController extends Controller
         }
     }
 
-    /* FUNÇÕES FUNCIONÁRIO */
+    /* FUNÇÕES CARGO FUNCIONÁRIO */
+    public function lista_cargos_funcionario()
+    {
+        $routes = array(
+            array('index'=> 'Inicio', 'route'=>'/inicio'),
+            array('index'=> 'Configurações', 'route'=>'/configuracoes'),
+            array('index'=> 'Cargos do funcionário', 'route'=>'#'),
+        );
+
+        try
+        {   
+            $cargo_funcionario = DB::table('cargo')
+            ->selectRaw('
+                cargo.id_cargo,
+                cargo.descricao
+            ')
+            ->get();
+
+        } catch (\Throwable $e) {
+            throw $e->getMessage();
+        }
+        
+        $payload = array('routes' => $routes, 'cargos_funcionario' => $cargo_funcionario, 'parametro_busca' => NULL);
+        
+        return view('/configuracoes/cargos_funcionario/cargos_funcionario_listar',$payload);
+    }
+
+    public function formulario_cargo_funcionario()
+    {
+        $routes = array(
+            array('index'=> 'Inicio', 'route'=>'/inicio'),
+            array('index'=> 'Configurações', 'route'=>'/configuracoes'),
+            array('index'=> 'Cargos do funcionário', 'route'=>'/funcoes_funcionario'),
+            array('index'=> (request('i')) ? 'Editar' :'Novo', 'route'=>'#')
+        );
+    
+        try 
+        {
+
+            if(request('i') != NULL)
+            {
+                $cargo_funcionario = DB::table('cargo')
+                ->selectRaw('
+                    cargo.id_cargo,
+                    cargo.descricao
+                ')
+                ->where('cargo.id_cargo', request('i'))->first();
+
+            }else{
+                $cargo_funcionario = NULL;
+            }
+
+        } catch (\Throwable $e) {
+            throw $e->getMessage();
+        }
+    
+        $payload = array(
+                'id' => request('i'), 
+                'routes' => $routes,
+                'cargo_funcionario' => $cargo_funcionario
+            );
+    
+        return view('/configuracoes/cargos_funcionario/cargos_funcionario_form',$payload);
+    }
+
+    public function cadastra_cargo_funcionario(Request $request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $gargo_funcionario = new CargoFuncionario;
+
+            $gargo_funcionario->descricao  = trim($request->descricao);
+            
+            $gargo_funcionario->save();
+
+            DB::commit();
+
+            return redirect('/funcoes_funcionario')->with('success','Cargo inserido com sucesso!');
+
+        }catch (\Throwable $e) {
+            DB::rollback();
+            return redirect('/funcoes_funcionario')->with('error', 'Erro! Não foi possível inserir cargo. Por favor, procure o administrador do sistema.');
+        }
+    }
+
+    public function edita_cargo_funcionario(Request $request, $id_cargo)
+    {   
+
+        try
+        {
+            DB::beginTransaction();
+
+            CargoFuncionario::where('id_cargo', '=', $id_cargo)->update([  
+                    'descricao' => trim($request->descricao)
+                ]);
+            
+            DB::commit();
+
+            return redirect('/funcoes_funcionario')->with('success','Dados do cargo atualizados com sucesso!');
+
+        }catch (\Throwable $e) {
+            DB::rollback();
+            return redirect('/funcoes_funcionario')->with('error', 'Erro! Não foi possível atualizar os dados do cargo. Por favor, procure o administrador do sistema.');
+        }
+    }
+
+    public function remove_cargo_funcionario(Request $request)
+    {
+        $retorno = array();
+
+        try
+        {   
+            $retorno = ['status' => 'sucesso', 'msg'=>'Removido com sucesso', 'id' => $request->id];
+
+            DB::beginTransaction();
+
+                $cargo_funcionario = DB::table('funcionario')
+                ->selectRaw('
+                    COUNT(funcionario.id_funcionario) AS total
+                ')
+                ->join('cargo', 'cargo.id_cargo', '=', 'funcionario.id_cargo')
+                ->where('funcionario.id_cargo',$request->id)
+                ->first();
+
+                if($cargo_funcionario->total > 0)
+                {
+                    $retorno['status'] = 'erro';
+                    $retorno['msg'] = 'Este cargo é utilizado por um ou mais funcionários do sistema. Atualize os registros para proseguir';
+                
+                }else{
+                    CargoFuncionario::where('id_cargo', '=', $request->id)->delete();
+                }
+
+            DB::commit();   
+
+        }catch (\Throwable $e) {
+            DB::rollback();
+            //$retorno = ['status' => 'erro', 'msg'=>'Erro! Não foi possível remover cargo. Por favor, procure o administrador do sistema.', 'id' => $request->id];
+            $retorno = ['status' => 'erro', 'msg'=> $e->getMessage(), 'id' => $request->id];
+        }finally{
+
+            return response()->json($retorno);
+        }
+    }
 
 }

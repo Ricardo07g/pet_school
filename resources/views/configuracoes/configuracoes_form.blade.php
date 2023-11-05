@@ -15,7 +15,7 @@
             </div>
 
             <div class="col-sm">
-              <button class="btn btn-secondary grid-btn" type="button" disabled>Em breve</button>
+              <a class="btn btn-secondary grid-btn" type="button" href="/funcoes_funcionario">Cargos do Funcionário</a>
             </div>
 
             <div class="col-sm">
