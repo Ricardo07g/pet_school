@@ -81,7 +81,7 @@
                     <div class="col-md-6">
                         <label for="cargo_funcionario" class="form-label">Função*</label>
                         <select id='cargo_funcionario' name='cargo_funcionario' class="form-select">
-                        <option value="-1"></option>
+                        <option value=""></option>
                         @foreach ($cargos_usuario as $key => $cargo_usuario) 
                             <option value="<?php echo $cargo_usuario->id_cargo; ?>" 
                                 <?php echo (@$funcionario->id_cargo !== NULL && $cargo_usuario->id_cargo == @$funcionario->id_cargo) ? 'selected' : '';?> 

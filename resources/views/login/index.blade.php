@@ -62,7 +62,7 @@
 					</div>
 
 					@if ($message = Session::get('error'))
-					    <div class="alert alert-danger">
+					    <div class="alert alert-danger" style="text-align:center;">
 					        {{ $message }}
 					    </div>
 					@endif
@@ -72,12 +72,13 @@
 							Entrar
 						</button>
 					</div>
-
+					<!--
 					<div class="text-center p-t-12">
 						<a class="txt2" href="#">
                             Esqueceu sua senha?
 						</a>
 					</div>
+					-->
 
 				</form>
 			</div>

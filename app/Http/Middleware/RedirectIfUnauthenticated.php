@@ -11,7 +11,7 @@ class RedirectIfUnauthenticated
     {
         if (!Auth::check() && $request->routeIs('protegida.*'))
         {
-            return redirect('/')->with('error', 'Sessão expirou!');
+            return redirect('/')->with('error', 'sua sessão expirou!');
         }
 
         return $next($request);

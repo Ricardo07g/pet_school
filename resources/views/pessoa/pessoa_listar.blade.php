@@ -49,6 +49,8 @@
             @endforeach 
             </tbody>
         </table>
+        
+        {!! $pessoas->withQueryString()->links('pagination::bootstrap-5') !!}
     @else
         <div id="infongMessage" class="alert alert-info alert-block" style="text-align:center"> 
             <strong>Não existem Pessoas a serem listadas</strong>

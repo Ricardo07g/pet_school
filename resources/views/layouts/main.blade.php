@@ -61,6 +61,21 @@
                     </li>
                     </ul>
                 </li>
+                <li class="active">
+                    <a href="#secretariaSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Secretaria</a>
+                    <ul class="collapse list-unstyled" id="secretariaSubmenu">
+                    <li>
+                        <a href="#">Tutores</a>
+                    </li>
+                    <li>
+                        <a href="#">Pets</a>
+                    </li>
+                    <li>
+                        <a href="#">Matrículas</a>
+                    </li>
+                    </ul>
+                </li>
+
             <!--
                 <li>
                     <a href="#">About</a>
@@ -84,6 +99,7 @@
                 <li>
                     <a href="#">Portfolio</a>
                 </li>
+            
             -->
 
                  <li>
@@ -165,13 +181,21 @@
 	</div>
 
     <script>
-        function spinner_loading(flag)
+        function spinner_loading(flag, timeout = 0)
         {
-            if(flag === true)
+            switch(true) 
             {
-                $('#spinner_loading').css('display','block');
-            }else{
-                $('#spinner_loading').css('display','none');
+                case (flag == true):
+                    $('#spinner_loading').css('display','block');
+                    break;
+                case (flag !== true):
+                    $('#spinner_loading').css('display','none');
+                    break;
+                case (flag == true && timeout > 0):
+                    setTimeout(() => { $('#spinner_loading').css('display','block'); }, timeout);
+                    break;
+                default:
+                    break;
             }
         }
     </script>

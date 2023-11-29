@@ -70,6 +70,7 @@ Route::middleware(['unauthenticated'])->group(function () {
     Route::post('/pessoa/novo', [PessoaController::class, 'cadastra_pessoa'])->name('protegida.pessoa_novo');
     Route::post('/pessoa/edita/{id}', [PessoaController::class, 'edita_pessoa'])->name('protegida.pessoa_edita');
     Route::post('/pessoa/remove', [PessoaController::class, 'remove_pessoa'])->name('protegida.pessoa_remove');
+    Route::post('/pessoa/verifica_email', [PessoaController::class, 'verifica_email_duplicado'])->name('protegida.pessoa_verifica_email');
 
 
     /* ROTAS FUNCIONÁRIOS */

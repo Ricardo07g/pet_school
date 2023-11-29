@@ -11,60 +11,208 @@
     <div class="content-page">
         <form class="row g-3" id="form-pessoa" action="<?php echo !empty($_GET['i']) ? '/pessoa/edita/'.$_GET['i'].'' : '/pessoa/novo';?>" method="POST">
             @csrf
-            <div class="row">
-                <div class="col-md-3">
-                    <label for="inputCPF" class="form-label">cpf</label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        id="cpf"  
-                        name="cpf"
-                        value="<?php echo !empty($_GET['i']) ? $pessoa->cpf : NULL ; ?>" 
-                    >
-                    <span id="cpf_checagem" class="checagem"></span> 
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-4">
-                    <label for="inputNome" class="form-label">Nome:</label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        id="nome" 
-                        name="nome"
-                        pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256"
-                        value="<?php echo !empty($_GET['i']) ? $pessoa->nome : NULL ; ?>" 
-                    >
-                    <span id="nome_checagem" class="checagem"></span> 
+            <fieldset class="border rounded-3 p-3">
+                <legend class="float-none w-auto px-3" >Informações da pessoa</legend>
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="inputCPF" class="form-label">cpf: *</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="cpf"  
+                            name="cpf"
+                            value="<?php echo !empty($_GET['i']) ? $pessoa->cpf : NULL ; ?>" 
+                        >
+                        <span id="cpf_checagem" class="checagem"></span> 
+                    </div>
                 </div>
-                <div class="col-md-8">
-                    <label for="inputDt_nascimento" class="form-label">Sobrenome</label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        id="sobrenome"
-                        name="sobrenome"
-                        pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256" 
-                        value="<?php echo !empty($_GET['i']) ? $pessoa->sobrenome : NULL ; ?>"
-                    >
-                    <span id="sobrenome_checagem" class="checagem"></span> 
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-3">
-                    <label for="inputDt_nascimento" class="form-label">Data de Nascimento</label>
-                    <input 
-                        type="date" 
-                        class="form-control" 
-                        id="dt_nascimento" 
-                        name="dt_nascimento"
-                        value="<?php echo !empty($_GET['i']) ? $pessoa->dt_nascimento : NULL ; ?>"
-                    >
-                    <span id="dt_nascimento_checagem" class="checagem"></span> 
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="inputNome" class="form-label">Nome: *</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="nome" 
+                            name="nome"
+                            pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256"
+                            value="<?php echo !empty($_GET['i']) ? $pessoa->nome : NULL ; ?>" 
+                        >
+                        <span id="nome_checagem" class="checagem"></span> 
+                    </div>
+                    <div class="col-md-8">
+                        <label for="inputDt_nascimento" class="form-label">Sobrenome: *</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="sobrenome"
+                            name="sobrenome"
+                            pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256" 
+                            value="<?php echo !empty($_GET['i']) ? $pessoa->sobrenome : NULL ; ?>"
+                        >
+                        <span id="sobrenome_checagem" class="checagem"></span> 
+                    </div>
                 </div>
-            </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="inputDt_nascimento" class="form-label">Data de Nascimento: *</label>
+                        <input 
+                            type="date" 
+                            class="form-control" 
+                            id="dt_nascimento" 
+                            name="dt_nascimento"
+                            value="<?php echo !empty($_GET['i']) ? $pessoa->dt_nascimento : NULL ; ?>"
+                        >
+                        <span id="dt_nascimento_checagem" class="checagem"></span> 
+                    </div>
+                    <div class="col-md-3">
+                        <label for="sexo" class="form-label">Sexo: </label>
+                        <select id='sexo' name='sexo' class="form-select">
+                            <option value=""></option>
+                            @foreach ($sexo_sistema as $key => $sexo) 
+                                <option value="<?php echo $sexo->id_sexo; ?>" 
+                                    <?php echo (@$pessoa->id_sexo !== NULL && $pessoa->id_sexo == @$sexo->id_sexo) ? 'selected' : '';?> 
+                                > 
+                                    <?php  echo $sexo->descricao; ?>
+                                </option>
+                            @endforeach 
+                        </select>
+                        <span id="sexo_checagem" class="checagem"></span> 
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cor_raca" class="form-label">Cor/Raça: </label>
+                        <select id='cor_raca' name='cor_raca' class="form-select">
+                            <option value=""></option>
+                            @foreach ($cor_raca_sistema as $key => $cor_raca) 
+                                <option value="<?php echo $cor_raca->id_cor_raca; ?>" 
+                                    <?php echo (@$pessoa->id_cor_raca !== NULL && $pessoa->id_cor_raca == @$cor_raca->id_cor_raca) ? 'selected' : '';?> 
+                                > 
+                                    <?php  echo $cor_raca->descricao; ?>
+                                </option>
+                            @endforeach
+                        </select>
+                        <span id="cor_raca_checagem" class="checagem"></span> 
+                    </div>
+                    <div class="col-md-3">
+                        <label for="estdo_civil" class="form-label">Estado civil: </label>
+                        <select id='estdo_civil' name='estdo_civil' class="form-select">
+                            <option value=""></option>
+                            @foreach ($estado_civil_sistema as $key => $estdo_civil) 
+                                <option value="<?php echo $estdo_civil->id_estdo_civil; ?>" 
+                                    <?php echo (@$pessoa->id_estdo_civil !== NULL && $pessoa->id_estdo_civil == @$estdo_civil->id_estdo_civil) ? 'selected' : '';?> 
+                                > 
+                                    <?php  echo $estdo_civil->descricao; ?>
+                                </option>
+                            @endforeach
+                        </select>
+                        <span id="estdo_civil_checagem" class="checagem"></span> 
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="escolaridade" class="form-label">Escolaridade: </label>
+                        <select id='escolaridade' name='escolaridade' class="form-select">
+                            <option value=""></option>
+                            @foreach ($escolaridade_sistema as $key => $escolaridade) 
+                                <option value="<?php echo $escolaridade->id_escolaridade; ?>" 
+                                    <?php echo (@$pessoa->id_escolaridade !== NULL && $pessoa->id_escolaridade == @$escolaridade->id_escolaridade) ? 'selected' : '';?> 
+                                > 
+                                    <?php  echo $escolaridade->descricao; ?>
+                                </option>
+                            @endforeach
+                        </select>
+                        <span id="escolaridade_checagem" class="checagem"></span> 
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="inputEmail" class="form-label">E-mail: </label>
+                        <input type="text" class="form-control" id="email" name="email" value="<?php echo !empty($_GET['i']) ? $pessoa->email : NULL ; ?>">
+                        <span id="email_checagem" class="checagem"></span> 
+                    </div>
+                    <div class="col-md-3">
+                        <label for="inputTelefoneNotificacao" class="form-label">Telefone para contato: </label>
+                        <input type="text" class="form-control" id="telefone_notificacao" name="telefone_notificacao" value="<?php echo !empty($_GET['i']) ? $pessoa->telefone_notificacao : NULL ; ?>">
+                        <span id="telefone_notificacao_checagem" class="checagem"></span> 
+                    </div>
+                </div>
+
+            </fieldset>
+
+            <fieldset class="border rounded-3 p-3">
+                <legend class="float-none w-auto px-3" >Endereço</legend>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="inputCep" class="form-label">CEP: </label>
+                        <input type="text" class="form-control" id="cep" name="cep" value="" flag="0">
+                        <span id="cep_checagem" class="checagem"></span> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="inputEndTipoLogradouro" class="form-label">Tipo logradouro: </label>
+                         <select id='end_tipo_logradouro' name='end_tipo_logradouro' class="form-select endereco">
+                            <option value=""></option>
+                            @foreach ($tipo_logradouro_sistema as $key => $tipo_logradouro) 
+                                <option value="<?php echo $tipo_logradouro->id_tipo_logradouro; ?>" 
+                                    <?php echo (@$pessoa->id_tipo_logradouro !== NULL && $pessoa->id_tipo_logradouro == @$tipo_logradouro->id_tipo_logradouro) ? 'selected' : '';?> 
+                                > 
+                                    <?php  echo $tipo_logradouro->descricao; ?>
+                                </option>
+                            @endforeach
+                        </select>
+                        <span id="end_tipo_logradouro_checagem" class="checagem"></span> 
+                    </div>
+                    <div class="col-md-7">
+                        <label for="inputEmail" class="form-label">Logradouro: </label>
+                        <input type="text" class="form-control endereco" id="logradouro" name="logradouro" value="">
+                        <span id="logradouro_checagem" class="checagem"></span> 
+                    </div>
+                    <div class="col-md-2">
+                        <label for="inputEmail" class="form-label">Número: </label>
+                        <input type="text" class="form-control endereco" id="numero" name="numero" value="">
+                        <span id="numero_checagem" class="checagem"></span> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="inputComplemento" class="form-label">Complemento: </label>
+                        <input type="text" class="form-control endereco" id="complemento" name="complemento" value="">
+                        <span id="complemento_checagem" class="checagem"></span> 
+                    </div>
+                    <div class="col-md-6">
+                        <label for="inptBairro" class="form-label">Bairro: </label>
+                        <input type="text" class="form-control endereco" id="bairro" name="bairro" value="">
+                        <span id="bairro_checagem" class="checagem"></span> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="inputEmail" class="form-label">Estado: </label>
+                        <select id='estado' name='estado' class="form-select endereco">
+                            <option value=""></option>
+                            @foreach ($unidades_federativas as $key => $unidade_federativa) 
+                                <option value="<?php echo $unidade_federativa->id_unidade_federativa; ?>"
+                                    <?php echo (@$pessoa->end_uf !== NULL && $pessoa->end_uf == @$unidade_federativa->id_unidade_federativa) ? 'selected' : '';?> 
+                                > 
+                                    <?php  echo $unidade_federativa->sigla; ?>
+                                </option>
+                            @endforeach
+                        </select>
+                        <span id="estado_checagem" class="checagem"></span> 
+                    </div>
+                    <div class="col-md-6">
+                        <label for="inputEmail" class="form-label">Cidade: </label>
+                        <input type="text" class="form-control endereco" id="municipio" name="municipio" value="">
+                        <span id="municipio_checagem" class="checagem"></span> 
+                    </div>
+                </div>
+            </fieldset>
 
             <div class="col-12">
                 <a class="btn btn-secondary" href="/pessoas" role="button" style="width: 150px;">Voltar</a>
@@ -77,6 +225,14 @@
     $( document ).ready(function() {
 
         $('#cpf').inputmask('999.999.999-99');
+        $('#telefone_notificacao').inputmask('(99) 9999-9999');
+        $('#cep').inputmask('99999-999');
+
+        $(".endereco").prop("disabled", true);
+
+        var cpf = '<?php echo auth()->user()->cpf; ?>';
+        var cep_old = '';
+        console.log('cpf', cpf);
 
         $("#nome").on("change", function(){
             $(this).val($(this).val().toUpperCase());
@@ -98,6 +254,52 @@
             }
         });
 
+        $("#cep").mouseleave(function () {
+            
+            var valorCep = $(this).val().replace(/\D/g, '');
+
+            console.log('CEP atual:', valorCep,'CEP old:',cep_old, 'flag_cep:', $('#cep').attr('flag'));
+
+            if($('#cep').attr('flag') == 0 || $('#cep').attr('flag') == 1 && valorCep != cep_old)
+            {
+                if(valorCep !== "" && valorCep.length == 8)
+                {   try
+                    {   
+                        spinner_loading(true, 500);
+
+                        var request = $.ajax({
+                            type: "GET",
+                            url: 'https://brasilapi.com.br/api/cep/v1/'+valorCep,
+                            async: false,  // Definir a chamada como síncrona
+                        });  
+
+                        if (request.status === 200)
+                        {   
+                            $('#cep').attr('flag', 1);
+                            console.log(request.responseJSON);
+
+                            if(request.responseJSON.hasOwnProperty('atributo'))
+                            {
+
+                            }
+
+                        }else{
+
+                            $('#cep').attr('flag', 1);
+                            $(".endereco").prop("disabled", false);
+                        }
+
+                        spinner_loading(false, 500);
+
+                    }catch(e){
+                        spinner_loading(false, 500);
+                    }
+                } 
+            }
+
+            cep_old = valorCep;
+        });
+
         $('#btn_salvar').click(function(){
             if(validacao_campos_formulario() == true)
             {
@@ -115,7 +317,7 @@
             $("#nome_checagem").html("");
             $("#sobrenome_checagem").html("");
             $("#dt_nascimento_checagem").html("");
-            $("#cargo_checagem").html("");
+            $("#email_checagem").html("");
 
             if(typeof $('#cpf').val() == 'undefined' || $('#cpf').val() == "")
             {   
@@ -186,6 +388,64 @@
                     erros++;
                 }
             } 
+            
+            if(typeof $('#email').val() != 'undefined' && $('#email').val() != "")
+            {
+                const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i;
+
+                console.log('Regex email: ', emailRegex.test($('#email').val()));
+
+                if(emailRegex.test($('#email').val()) == true)
+                {
+                    try
+                    {   
+                        var email_pessoa = $('#email').val();
+                        var id_pessoa = '<?php echo (!empty($_GET['i'])) ? $_GET['i'] : "-1";?>';
+                        var url = '/pessoa/verifica_email';
+                        var token = '{{ csrf_token() }}';
+
+                        var request = $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: {id: id_pessoa, email: email_pessoa, _token: token},
+                            async: false,  // Definir a chamada como síncrona
+                        });
+
+                        if (request.status === 200)
+                        {
+                            var data = JSON.parse(request.responseText);
+
+                            if (data.status === "sucesso")
+                            {
+                                
+                                if(data.flag == "false")
+                                {   
+                                    $("#email_checagem").html("E-mail já cadastrado em outra pessoa");
+                                    $("#email_checagem").css("display", "block");
+                                    erros++;
+                                }
+                            }
+
+                        } else {
+                            $("#email_checagem").html("Não foi possível verificar E-mail. Procure o administrador do sistema.");
+                            $("#email_checagem").css("display", "block");
+                            erros++;
+                        }
+
+                    }catch(e){
+
+                        $("#email_checagem").html("Não foi possível verificar E-mail. Procure o administrador do sistema.");
+                        $("#email_checagem").css("display", "block");
+                         erros++; 
+                    }
+                }else{
+
+                    $("#email_checagem").html("formato inválido");
+                    $("#email_checagem").css("display", "block");
+                    erros++;
+                }
+
+            }  
 
             return (erros == 0) ? true : false;
         }
