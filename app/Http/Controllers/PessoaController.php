@@ -8,13 +8,15 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Pessoa;
 
 class PessoaController extends Controller
-{
-    public function index()
+{   
+    private $debug = true;
+
+    private function index()
     {
         $PessoaClass = Pessoa::all();
     }
 
-    public function lista_pessoas()
+    protected function lista_pessoas()
     {
 
         $routes = array(
@@ -51,14 +53,13 @@ class PessoaController extends Controller
         $routes = array(
             array('index'=> 'Inicio', 'route'=>'/inicio'),
             array('index'=> 'Listagem de pessoas', 'route'=>'/pessoas'),
-            array('index'=> (request('i')) ? 'Editar pessoa' :'Cadastrar pessoa', 'route'=>'/pessoa')
+            array('index'=> (request('i')) ? 'Editar' :'Cadastrar', 'route'=>'/pessoa')
         );
     
         $dados_pessoa = NULL;
 
         try
         {
-
             $dados_sexo = DB::table('sexo')->get();
             $dados_cor_raca = DB::table('cor_raca')->get();
             $dados_estado_civil = DB::table('estdo_civil')->get();
@@ -116,43 +117,60 @@ class PessoaController extends Controller
     }
 
     public function cadastra_pessoa(Request $request)
-    {
-        $routes = array(
-            array('index'=> 'Inicio', 'route'=>'/inicio'),
-            array('index'=> 'Listagem de pessoas', 'route'=>'/pessoas'),
-        );
-
+    {   
         try
         {
             DB::beginTransaction();
 
             $pessoa = new Pessoa;
 
-            $pessoa->nome                 = $request->nome;
-            $pessoa->sobrenome            = $request->sobrenome;
-            $pessoa->dt_nascimento        = $request->dt_nascimento;
-            $pessoa->cpf                  = $request->cpf;
-            $pessoa->email                = $request->email;
-            $pessoa->telefone_notificacao = $request->telefone_notificacao;
-            $pessoa->id_sexo              = $request->sexo;
-            $pessoa->id_cor_raca          = $request->cor_raca;
-            $pessoa->id_estdo_civil       = $request->estdo_civil;
-            $pessoa->id_escolaridade      = $request->escolaridade;
+            $pessoa->nome                   = $request->nome;
+            $pessoa->sobrenome              = $request->sobrenome;
+            $pessoa->dt_nascimento          = $request->dt_nascimento;
+            $pessoa->cpf                    = $request->cpf;
+            $pessoa->email                  = $request->email;
+            $pessoa->telefone_notificacao   = $request->telefone_notificacao;
+            $pessoa->id_sexo                = $request->sexo;
+            $pessoa->id_cor_raca            = $request->cor_raca;
+            $pessoa->id_estdo_civil         = $request->estdo_civil;
+            $pessoa->id_escolaridade        = $request->escolaridade;
+            $pessoa->end_cep                = $request->cep;
+            $pessoa->end_id_tipo_logradouro = $request->end_tipo_logradouro;
+            $pessoa->end_logradouro         = $request->logradouro;
+            $pessoa->end_numero             = $request->numero;
+            $pessoa->end_complemento        = $request->complemento;
+            $pessoa->end_bairro             = $request->bairro;
+            $pessoa->end_uf                 = $request->estado;
+            $pessoa->end_municipio          = $request->municipio;
             
             $pessoa->save();
 
             DB::commit();
 
-            return redirect('/pessoas')->with('success','Pessoa inserida com sucesso!');
+            $retorno = array(
+                        'rota' => '/pessoas',
+                        'status' => 'success', 
+                        'msg' => 'Pessoa inserida com sucesso!'
+                    );
 
         }catch (\Throwable $e) {
+
             DB::rollback();
-            return redirect('/pessoas')->with('error','Erro! Não foi possível inserir pessoa. Por favor, procure o administrador do sistema.');
+
+            $retorno = array(
+                        'rota' => '/pessoas',
+                        'status' => 'error', 
+                        'msg' => ($this->debug == true) ? "<pre>".$e->getMessage()."</pre>" : 'Erro! Não foi possível atualizar os dados desta pessoa. Por favor, procure o administrador do sistema.'
+                    );
+
+        }finally{
+
+            return redirect($retorno['rota'])->with($retorno['status'], $retorno['msg']);
         }
     }
 
     public function edita_pessoa(Request $request, $id_pessoa)
-    {
+    {   
         try
         {
             DB::beginTransaction();
@@ -167,26 +185,43 @@ class PessoaController extends Controller
                     'id_sexo'  => $request->sexo,
                     'id_cor_raca'  => $request->cor_raca,
                     'id_estdo_civil'  => $request->estdo_civil,
-                    'id_escolaridade'  => $request->escolaridade
+                    'id_escolaridade'  => $request->escolaridade,
+                    'end_cep' => $request->cep,
+                    'end_id_tipo_logradouro' => @$request->end_tipo_logradouro,
+                    'end_logradouro' => $request->logradouro,
+                    'end_numero' => $request->numero,
+                    'end_complemento' => $request->complemento,
+                    'end_bairro' => $request->bairro,
+                    'end_uf' => $request->estado,
+                    'end_municipio'  => $request->municipio
                 ]);
             
             DB::commit();
 
-            return redirect('/pessoas')->with('success','Dados da pessoa atualizados com sucesso!');
+            $retorno = array(
+                'rota' => '/pessoas',
+                'status' => 'success', 
+                'msg' => 'Pessoa atualizada com sucesso!'
+            );
 
         }catch (\Throwable $e) {
+
             DB::rollback();
-            return redirect('/pessoas')->with('error', 'Erro! Não foi possível atualizar os dados desta pessoa. Por favor, procure o administrador do sistema.');
+
+            $retorno = array(
+                'rota' => '/pessoas',
+                'status' => 'error', 
+                'msg' => ($this->debug == true) ? "<pre>".$e->getMessage()."</pre>" : 'Erro! Não foi possível atualizar esta pessoa. Por favor, procure o administrador do sistema.'
+            );
+        
+        }finally{
+
+            return redirect($retorno['rota'])->with($retorno['status'], $retorno['msg']);
         }
     }
 
     public function remove_pessoa(Request $request)
     {
-        $routes = array(
-            array('index'=> 'Inicio', 'route'=>'/inicio'),
-            array('index'=> 'Listagem de pessoas', 'route'=>'/pessaos'),
-        );
-        $retorno = array();
         try
         {
             DB::beginTransaction();
@@ -198,7 +233,7 @@ class PessoaController extends Controller
         }catch (\Throwable $e) {
             DB::rollback();
 
-            $retorno = ['status' => 'erro', 'msg'=>'Erro! Não foi possível remover esta pessoa. Por favor, procure o administrador do sistema.', 'id' => $request->id];
+            $retorno = ['status' => 'erro', 'msg'=> ($this->$debug) ? $e->getMessage() : 'Erro! Não foi possível remover esta pessoa. Por favor, procure o administrador do sistema.', 'id' => $request->id];
         }finally{
 
             return response()->json($retorno);
@@ -209,7 +244,6 @@ class PessoaController extends Controller
     {   
         try
         {   
-            
             if(!empty(request('id')) && request('id') != '-1')
             {
 

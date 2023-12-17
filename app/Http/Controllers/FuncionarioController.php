@@ -10,14 +10,13 @@ use APP\Models\Pessoa;
 
 class FuncionarioController extends Controller
 {
-    public function index()
+    private function index()
     {
         $FuncionarioClass = Funcionario::all();
     }
 
-    public function lista_funcionarios()
+    protected function lista_funcionarios()
     {
-
         $routes = array(
             array('index'=> 'Inicio', 'route'=>'/inicio'),
             array('index'=> 'Listagem de funcionários', 'route'=>'/funcionarios'),
@@ -59,13 +58,12 @@ class FuncionarioController extends Controller
         return view('/funcionario/funcionario_listar',$payload);
     }
 
-
-    public function formulario_funcionario()
+    protected function formulario_funcionario()
     {
         $routes = array(
             array('index'=> 'Inicio', 'route'=>'/inicio'),
             array('index'=> 'Listagem de funcionários', 'route'=>'/funcionarios'),
-            array('index'=> (request('i')) ? 'Editar funcionário' :'Cadastrar funcionário', 'route'=>'/funcionario')
+            array('index'=> (request('i')) ? 'Editar' :'Cadastrar', 'route'=>'/funcionario')
         );
     
         $dados_funcionario = NULL;
@@ -76,6 +74,7 @@ class FuncionarioController extends Controller
             try {
                 $dados_funcionario = DB::table('funcionario')
                 ->selectRaw('
+                    pessoa.id_pessoa,
                     pessoa.cpf,
                     CONCAT(pessoa.nome, " ", pessoa.sobrenome) AS nome_completo,
                     pessoa.dt_nascimento,
@@ -115,13 +114,8 @@ class FuncionarioController extends Controller
         return view('/funcionario/funcionario_form',$payload);
     }
 
-    public function cadastra_funcionario(Request $request)
+    protected function cadastra_funcionario(Request $request)
     {
-        $routes = array(
-            array('index'=> 'Inicio', 'route'=>'/inicio'),
-            array('index'=> 'Listagem de funcionários', 'route'=>'/funcionarios'),
-        );
-
         try
         {
             DB::beginTransaction();
@@ -136,15 +130,28 @@ class FuncionarioController extends Controller
 
             DB::commit();
 
-            return redirect('/funcionarios')->with('success','Funcionario inserido com sucesso!');
+            $retorno = array(
+                        'rota' => '/funcionarios',
+                        'status' => 'success', 
+                        'msg' => 'Funcionario inserido com sucesso!'
+                    );
 
         }catch (\Throwable $e) {
+            
             DB::rollback();
-            return redirect('/funcionarios')->with('error', 'Erro! Não foi possível inserir funcionário. Por favor, procure o administrador do sistema.');
+            $retorno = array(
+                        'rota' => '/funcionarios',
+                        'status' => 'error',
+                        'msg' => 'Erro! Não foi possível inserir funcionário. Por favor, procure o administrador do sistema.'
+                    );
+        
+        }finally{
+
+            return redirect($retorno['rota'])->with($retorno['status'], $retorno['msg']);
         }
     }
 
-    public function edita_funcionario(Request $request, $id_funcionario)
+    protected function edita_funcionario(Request $request, $id_funcionario)
     {
         try
         {
@@ -158,21 +165,30 @@ class FuncionarioController extends Controller
             
             DB::commit();
 
-            return redirect('/funcionarios')->with('success','Dados do funcionário atualizados com sucesso!');
+            $retorno = array(
+                        'rota' => '/funcionarios',
+                        'status' => 'success', 
+                        'msg' => 'Funcionário atualizado com sucesso!'
+                    );
 
         }catch (\Throwable $e) {
+
             DB::rollback();
-            return redirect('/funcionarios')->with('error', 'Erro! Não foi possível atualizar os dados do funcionário. Por favor, procure o administrador do sistema.');
+
+            $retorno = array(
+                'rota' => '/funcionarios',
+                'status' => 'error', 
+                'msg' => 'Erro! Não foi possível atualizar este funcionário. Por favor, procure o administrador do sistema.'
+            );
+
+        }finally{
+
+            return redirect($retorno['rota'])->with($retorno['status'], $retorno['msg']);
         }
     }
 
-    public function remove_funcionario(Request $request)
+    protected function remove_funcionario(Request $request)
     {
-        $routes = array(
-            array('index'=> 'Inicio', 'route'=>'/inicio'),
-            array('index'=> 'Listagem de funcionários', 'route'=>'/funcionarios'),
-        );
-        $retorno = array();
         try
         {
             DB::beginTransaction();
@@ -182,9 +198,11 @@ class FuncionarioController extends Controller
             $retorno = ['status' => 'sucesso', 'msg'=>'Removido com sucesso', 'id' => $request->id];
 
         }catch (\Throwable $e) {
+
             DB::rollback();
 
-            $retorno = ['status' => 'erro', 'msg'=>'Erro! Não foi possível remover funcionário. Por favor, procure o administrador do sistema.', 'id' => $request->id];
+            $retorno = ['status' => 'erro', 'msg'=>'Erro! Não foi possível remover este funcionário. Por favor, procure o administrador do sistema.', 'id' => $request->id];
+       
         }finally{
 
             return response()->json($retorno);

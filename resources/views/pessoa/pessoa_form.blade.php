@@ -34,7 +34,7 @@
                         <label for="inputNome" class="form-label">Nome: *</label>
                         <input 
                             type="text" 
-                            class="form-control" 
+                            class="form-control uppercase" 
                             id="nome" 
                             name="nome"
                             pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256"
@@ -46,10 +46,11 @@
                         <label for="inputDt_nascimento" class="form-label">Sobrenome: *</label>
                         <input 
                             type="text" 
-                            class="form-control" 
+                            class="form-control uppercase" 
                             id="sobrenome"
                             name="sobrenome"
-                            pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256" 
+                            pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" 
+                            maxlength="256" 
                             value="<?php echo !empty($_GET['i']) ? $pessoa->sobrenome : NULL ; ?>"
                         >
                         <span id="sobrenome_checagem" class="checagem"></span> 
@@ -149,7 +150,7 @@
                 <div class="row">
                     <div class="col-md-2">
                         <label for="inputCep" class="form-label">CEP: </label>
-                        <input type="text" class="form-control" id="cep" name="cep" value="" flag="0">
+                        <input type="text" class="form-control" id="cep" name="cep" flag="0" value="<?php echo !empty($_GET['i']) ? $pessoa->end_cep : NULL ; ?>">
                         <span id="cep_checagem" class="checagem"></span> 
                     </div>
                 </div>
@@ -160,7 +161,7 @@
                             <option value=""></option>
                             @foreach ($tipo_logradouro_sistema as $key => $tipo_logradouro) 
                                 <option value="<?php echo $tipo_logradouro->id_tipo_logradouro; ?>" 
-                                    <?php echo (@$pessoa->id_tipo_logradouro !== NULL && $pessoa->id_tipo_logradouro == @$tipo_logradouro->id_tipo_logradouro) ? 'selected' : '';?> 
+                                    <?php echo (@$pessoa->end_id_tipo_logradouro !== NULL && $pessoa->end_id_tipo_logradouro == @$tipo_logradouro->id_tipo_logradouro) ? 'selected' : '';?> 
                                 > 
                                     <?php  echo $tipo_logradouro->descricao; ?>
                                 </option>
@@ -170,24 +171,46 @@
                     </div>
                     <div class="col-md-7">
                         <label for="inputEmail" class="form-label">Logradouro: </label>
-                        <input type="text" class="form-control endereco" id="logradouro" name="logradouro" value="">
+                        <input 
+                            type="text" 
+                            class="form-control endereco uppercase" 
+                            id="logradouro" 
+                            name="logradouro" 
+                            value="<?php echo !empty($_GET['i']) ? $pessoa->end_logradouro : NULL ; ?>"
+                            pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" 
+                            maxlength="256" 
+                        >
                         <span id="logradouro_checagem" class="checagem"></span> 
                     </div>
                     <div class="col-md-2">
                         <label for="inputEmail" class="form-label">Número: </label>
-                        <input type="text" class="form-control endereco" id="numero" name="numero" value="">
+                        <input 
+                            type="text"
+                            class="form-control endereco"
+                            id="numero"
+                            name="numero"
+                            value="<?php echo !empty($_GET['i']) ? $pessoa->end_numero : NULL ; ?>"
+                            pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" 
+                            maxlength="256" 
+                        >
                         <span id="numero_checagem" class="checagem"></span> 
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <label for="inputComplemento" class="form-label">Complemento: </label>
-                        <input type="text" class="form-control endereco" id="complemento" name="complemento" value="">
+                        <input 
+                            type="text"
+                            class="form-control endereco uppercase"
+                            id="complemento"
+                            name="complemento" 
+                            value="<?php echo !empty($_GET['i']) ? $pessoa->end_complemento : NULL ; ?>"
+                        >
                         <span id="complemento_checagem" class="checagem"></span> 
                     </div>
                     <div class="col-md-6">
                         <label for="inptBairro" class="form-label">Bairro: </label>
-                        <input type="text" class="form-control endereco" id="bairro" name="bairro" value="">
+                        <input type="text" class="form-control endereco uppercase" id="bairro" name="bairro" value="<?php echo !empty($_GET['i']) ? $pessoa->end_bairro : NULL ; ?>">
                         <span id="bairro_checagem" class="checagem"></span> 
                     </div>
                 </div>
@@ -208,7 +231,13 @@
                     </div>
                     <div class="col-md-6">
                         <label for="inputEmail" class="form-label">Cidade: </label>
-                        <input type="text" class="form-control endereco" id="municipio" name="municipio" value="">
+                        <input 
+                            type="text"
+                            class="form-control endereco uppercase" 
+                            id="municipio" 
+                            name="municipio" 
+                            value="<?php echo !empty($_GET['i']) ? $pessoa->end_municipio : NULL ; ?>"
+                        >
                         <span id="municipio_checagem" class="checagem"></span> 
                     </div>
                 </div>
@@ -232,40 +261,20 @@
 
         var cpf = '<?php echo auth()->user()->cpf; ?>';
         var cep_old = '';
-        console.log('cpf', cpf);
-
-        $("#nome").on("change", function(){
-            $(this).val($(this).val().toUpperCase());
-            var regexp = /[^A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ^\s+]/g;
-
-            if(this.value.match(regexp))
-            {
-                $(this).val(this.value.replace(regexp,''));
-            }
-        });
-
-        $("#sobrenome").on("change", function(){
-            $(this).val($(this).val().toUpperCase());
-            var regexp = /[^A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ^\s+]/g;
-
-            if(this.value.match(regexp))
-            {
-                $(this).val(this.value.replace(regexp,''));
-            }
-        });
+        //console.log('cpf', cpf);
 
         $("#cep").mouseleave(function () {
             
             var valorCep = $(this).val().replace(/\D/g, '');
 
-            console.log('CEP atual:', valorCep,'CEP old:',cep_old, 'flag_cep:', $('#cep').attr('flag'));
+            //console.log('CEP atual:', valorCep,'CEP old:',cep_old, 'flag_cep:', $('#cep').attr('flag'));
 
             if($('#cep').attr('flag') == 0 || $('#cep').attr('flag') == 1 && valorCep != cep_old)
             {
                 if(valorCep !== "" && valorCep.length == 8)
                 {   try
                     {   
-                        spinner_loading(true, 500);
+                        spinner_loading(true, 1000);
 
                         var request = $.ajax({
                             type: "GET",
@@ -278,9 +287,14 @@
                             $('#cep').attr('flag', 1);
                             console.log(request.responseJSON);
 
-                            if(request.responseJSON.hasOwnProperty('atributo'))
-                            {
+                            if(request.responseJSON.hasOwnProperty('cep'))
+                            {   
+                                $("#bairro").val(request.responseJSON.neighborhood.toUpperCase());
+                                $("#municipio").val(request.responseJSON.city.toUpperCase());
+                                $("#estado option:contains('" + request.responseJSON.state + "')").prop("selected", true);
+                                $("#logradouro").val(request.responseJSON.street.replace(/^[\S]+\s/, '').toUpperCase());
 
+                                $(".endereco").prop("disabled", false);
                             }
 
                         }else{

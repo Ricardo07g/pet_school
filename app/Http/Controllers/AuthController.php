@@ -25,12 +25,15 @@ class AuthController extends Controller
    
         $credentials = $request->only('email', 'senha');
 
-        $user = Usuario::where('email', $request->email)->first();
+        $user = Usuario::where('email', $request->email)
+                        ->where('ativo', 1)
+                        ->first();
 
         if ($user && Hash::check($request->senha, $user->senha))
         {
             Auth::login($user);
             return redirect('/inicio');
+
         } else {
             // Senha não corresponde
             return redirect('/')->with('error', 'E-mail e/ou senha inválido(s)!');

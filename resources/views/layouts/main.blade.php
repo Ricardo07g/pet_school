@@ -181,6 +181,23 @@
 	</div>
 
     <script>
+
+        $( document ).ready(function() {
+
+            $(".uppercase").on("change", function(){
+
+                $(this).val($(this).val().toUpperCase());
+                var regexp = /[^A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ^\s+]/g;
+
+                if(this.value.match(regexp))
+                {
+                    $(this).val(this.value.replace(regexp,''));
+                }
+
+            });
+
+        });
+        
         function spinner_loading(flag, timeout = 0)
         {
             switch(true) 
@@ -198,6 +215,7 @@
                     break;
             }
         }
+
     </script>
 
     </body>

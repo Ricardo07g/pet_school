@@ -6,16 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
 
 class UsuarioController extends Controller
 {
-    public function index()
+    private function index()
     {
         $UsuarioClass = Usuario::all();
     }
 
-    public function lista_usuarios()
+    protected function lista_usuarios()
     {
 
         $routes = array(
@@ -50,12 +51,12 @@ class UsuarioController extends Controller
         return view('/usuario/usuario_listar',$payload);
     }
 
-    public function formulario_usuario()
+    protected function formulario_usuario()
     {
         $routes = array(
             array('index'=> 'Inicio', 'route'=>'/inicio'),
             array('index'=> 'Listagem de usuários', 'route'=>'/usuarios'),
-            array('index'=> (request('i')) ? 'Editar usuário' :'Cadastrar usuário', 'route'=>'/usuario')
+            array('index'=> (request('i')) ? 'Editar' :'Cadastrar', 'route'=>'/usuario')
         );
     
         $dados_usuario = NULL;
@@ -81,13 +82,8 @@ class UsuarioController extends Controller
         return view('/usuario/usuario_form',$payload);
     }
 
-    public function cadastra_usuario(Request $request)
+    protected function cadastra_usuario(Request $request)
     {
-        $routes = array(
-            array('index'=> 'Inicio', 'route'=>'/inicio'),
-            array('index'=> 'Listagem de usuários', 'route'=>'/usuarios'),
-        );
-
         try
         {
             DB::beginTransaction();
@@ -106,20 +102,34 @@ class UsuarioController extends Controller
             $usuario->save();
             DB::commit();
 
-            return redirect('/usuarios')->with('success','Usuário inserido com sucesso!');
+            $retorno = array(
+                'rota' => '/usuarios',
+                'status' => 'success', 
+                'msg' => 'Usuário inserido com sucesso!'
+            );
 
         }catch (\Throwable $e) {
+
             DB::rollback();
-            return redirect('/usuarios')->with('error','Erro! Não foi possível inserir usuário. Por favor, procure o administrador do sistema.');
-            //return redirect('/usuarios')->with('error',$e->getMessage());
+
+            $retorno = array(
+                'rota' => '/usuarios',
+                'status' => 'error', 
+                'msg' => 'Erro! Não foi possível inserir este usuário. Por favor, procure o administrador do sistema.'
+            );
+
+        }finally{
+
+            return redirect($retorno['rota'])->with($retorno['status'], $retorno['msg']);
         }
     }
 
-    public function edita_usuario(Request $request, $id_usuario)
+    protected function edita_usuario(Request $request, $id_usuario)
     {
         try
         {
             DB::beginTransaction();
+
             if(@$id_usuario != 31)
             {
                 if(!empty($request->nova_senha))
@@ -149,35 +159,45 @@ class UsuarioController extends Controller
 
             DB::commit();
 
-            return redirect('/usuarios')->with('success','Dados do usuário atualizados com sucesso!');
+            $retorno = array(
+                'rota' => '/usuarios',
+                'status' => 'success', 
+                'msg' => 'Usuário atualizado com sucesso!'
+            );
 
         }catch (\Throwable $e) {
+
             DB::rollback();
-            return redirect('/usuarios')->with('error', 'Erro! Não foi possível atualizar os dados do usuário. Por favor, procure o administrador do sistema.'.'\n'.$e->getMessage());
+
+            $retorno = array(
+                'rota' => '/usuarios',
+                'status' => 'error', 
+                'msg' => 'Erro! Não foi possível atualizar este usuário. Por favor, procure o administrador do sistema'
+            );
+
+        }finally{
+
+            return redirect($retorno['rota'])->with($retorno['status'], $retorno['msg']);
         }
     }
 
-    public function remove_usuario(Request $request)
+    protected function remove_usuario(Request $request)
     {
-        $routes = array(
-            array('index'=> 'Inicio', 'route'=>'/inicio'),
-            array('index'=> 'Listagem de usuários', 'route'=>'/usuarios'),
-        );
-
-        $retorno = array();
-
         try
         {
             DB::beginTransaction();
+
             if(@$request->id != 31)
             {
                 Usuario::where('id_usuario', '=', $request->id)->delete();
             }
+
             DB::commit();
 
             $retorno = ['status' => 'sucesso', 'msg'=>'Removido com sucesso', 'id' => $request->id];
 
         }catch (\Throwable $e) {
+
             DB::rollback();
 
             $retorno = ['status' => 'erro', 'msg'=>'Erro! Não foi possível remover usuário. Por favor, procure o administrador do sistema.', 'id' => $request->id];
@@ -188,7 +208,7 @@ class UsuarioController extends Controller
         }
     }
 
-    public function verifica_email_duplicado(Request $request,)
+    protected function verifica_email_duplicado(Request $request,)
     {   
         try
         {   

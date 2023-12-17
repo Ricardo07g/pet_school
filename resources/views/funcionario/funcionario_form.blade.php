@@ -113,7 +113,7 @@
                 @endif
             </div>
 
-             <input type="hidden" id="id_pessoa" name="id_pessoa" value="<?php echo @$_GET['i']; ?>">
+             <input type="hidden" id="id_pessoa" name="id_pessoa" value="<?php echo @$funcionario->id_pessoa; ?>">
 
             <div class="col-12">
                 <a class="btn btn-secondary" href="/funcionarios" role="button" style="width: 150px;">Voltar</a>
