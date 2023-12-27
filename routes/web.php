@@ -80,4 +80,7 @@ Route::middleware(['unauthenticated'])->group(function () {
     Route::post('/funcionario/edita/{id}', [FuncionarioController::class, 'edita_funcionario'])->name('protegida.funcionario_edita');
     Route::post('/funcionario/remove', [FuncionarioController::class, 'remove_funcionario'])->name('protegida.funcionario_remove');
 
+    /* ROTAS PET */
+    Route::get('/pets', [PetController::class, 'lista_pets'])->name('protegida.pets');
+
 });

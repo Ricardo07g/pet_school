@@ -7,10 +7,13 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Usuario;
 
 class UsuarioController extends Controller
-{
+{   
+    private $debug = false;
+
     private function index()
     {
         $UsuarioClass = Usuario::all();
@@ -69,9 +72,12 @@ class UsuarioController extends Controller
                         ->join('usuario_grupo', 'usuario_grupo.id_grupo_usuario', '=', 'usuarios.id_usuario_grupo')
                         ->where('id_usuario', request('i'))
                         ->first();
+
+                $dados_usuario->foto_perfil = (!empty($dados_usuario->foto_perfil)) ? $dados_usuario->foto_perfil : 'generic_user.png';
                 
             } catch (\Throwable $e) {
                 throw $e->getMessage();
+
             }
         }
 
@@ -85,7 +91,17 @@ class UsuarioController extends Controller
     protected function cadastra_usuario(Request $request)
     {
         try
-        {
+        {   
+            $request->validate([
+                'nome' => 'required|string|max:256',
+                'sobrenome' => 'required|string|max:256',
+                'cpf' => 'required|string|max:14',
+                'dt_nascimento' => 'date',
+                'email' => 'required|email',
+                'senha' => 'required|string|max:256',
+                //'foto_perfil' => 'nullable|image|mimes:jpeg,png,jpg,gif,jpeg|max:2048', // Exemplo: tamanho máximo de 2 MB
+            ]);
+
             DB::beginTransaction();
 
             $usuario = new Usuario;
@@ -99,7 +115,31 @@ class UsuarioController extends Controller
             $usuario->senha            = Hash::make($request->senha);
             $usuario->ativo            = 1;
     
+            
+
+            if(!empty(@$request->foto_perfil))
+            {
+                try
+                {  
+                    // Obtenha o caminho temporário do arquivo carregado
+                    $imagemTemporaria = $request->file('foto_perfil');
+
+                    // Gere um nome único para a imagem
+                    $nomeUnico = uniqid() . '_' . time() . '.' . $imagemTemporaria->extension();
+
+                    // Salve a imagem no armazenamento público
+                    //$caminhoImagem = $imagemTemporaria->storeAs('system/images/foto_usuario/', $nomeUnico, 'public');
+                    $caminhoImagem = $imagemTemporaria->move(public_path('system/images/foto_usuario/'), $nomeUnico);
+
+                }catch(\Throwable $e){
+                    $nomeUnico = NULL;
+                }
+            }
+
+            $usuario->foto_perfil = $nomeUnico;
+
             $usuario->save();
+
             DB::commit();
 
             $retorno = array(
@@ -111,11 +151,14 @@ class UsuarioController extends Controller
         }catch (\Throwable $e) {
 
             DB::rollback();
+            //\Illuminate\Validation\ValidationException $e
+            //$errors = $e->validator->errors()->messages();
+            //dd($errors)
 
             $retorno = array(
                 'rota' => '/usuarios',
                 'status' => 'error', 
-                'msg' => 'Erro! Não foi possível inserir este usuário. Por favor, procure o administrador do sistema.'
+                'msg' => ($this->debug) ?  $e->getMessage() : 'Erro! Não foi possível inserir este usuário. Por favor, procure o administrador do sistema.'
             );
 
         }finally{
@@ -127,11 +170,49 @@ class UsuarioController extends Controller
     protected function edita_usuario(Request $request, $id_usuario)
     {
         try
-        {
+        {   
+            $request->validate([
+                'nome' => 'required|string|max:256',
+                'sobrenome' => 'required|string|max:256',
+                'cpf' => 'required|string|max:14',
+                'dt_nascimento' => 'date',
+                'email' => 'required|email',
+                'nova_senha' => 'nullable|string|max:256',
+                //'foto_perfil' => 'nullable|image|mimes:jpeg,png,jpg,gif,jpg|max:2048'
+            ]);
+
             DB::beginTransaction();
 
+            $dados_usuario = DB::table('usuarios')->where('id_usuario', $id_usuario)->first();
+
+            $nomeUnico = @$dados_usuario->foto_perfil;
+
             if(@$id_usuario != 31)
-            {
+            {   
+                if(!empty(@$request->foto_perfil))
+                {
+                    try
+                    {  
+                        // Obtenha o caminho temporário do arquivo carregado
+                        $imagemTemporaria = $request->file('foto_perfil');
+
+                        // Gere um nome único para a imagem
+                        $nomeUnico = uniqid() . '_' . time() . '.' . $imagemTemporaria->extension();
+
+                        // Salve a imagem no armazenamento público
+                        //$caminhoImagem = $imagemTemporaria->storeAs('system/images/foto_usuario/', $nomeUnico, 'public');
+                        $caminhoImagem = $imagemTemporaria->move(public_path('system/images/foto_usuario/'), $nomeUnico);
+
+                        if(!empty($dados_usuario->foto_perfil) && Storage::disk('foto_usuario')->exists($dados_usuario->foto_perfil) == true)
+                        {
+                            Storage::disk('foto_usuario')->delete(@$dados_usuario->foto_perfil);
+                        }
+
+                    }catch(\Throwable $e){
+                        $nomeUnico = NULL;
+                    }
+                }
+
                 if(!empty($request->nova_senha))
                 {
                     Usuario::where('id_usuario', '=', $id_usuario)->update([  
@@ -141,7 +222,8 @@ class UsuarioController extends Controller
                         'ativo' => $request->ativo,
                         'id_usuario_grupo' => $request->grupo_usuario,
                         'email' =>  $request->email,
-                        'senha' => Hash::make($request->nova_senha)
+                        'senha' => Hash::make($request->nova_senha),
+                        'foto_perfil' => $nomeUnico
                     ]);
 
                 }else{
@@ -153,6 +235,7 @@ class UsuarioController extends Controller
                         'ativo' => $request->ativo,
                         'id_usuario_grupo' => $request->grupo_usuario,
                         'email' =>  $request->email,
+                        'foto_perfil' => $nomeUnico
                     ]);
                 }
             }
@@ -164,15 +247,20 @@ class UsuarioController extends Controller
                 'status' => 'success', 
                 'msg' => 'Usuário atualizado com sucesso!'
             );
-
+            
         }catch (\Throwable $e) {
 
             DB::rollback();
+            /*
+            \Illuminate\Validation\ValidationException $e
+            $errors = $e->validator->errors()->messages();
+            dd($errors)
+            */
 
             $retorno = array(
                 'rota' => '/usuarios',
                 'status' => 'error', 
-                'msg' => 'Erro! Não foi possível atualizar este usuário. Por favor, procure o administrador do sistema'
+                'msg' => ($this->debug) ? $e->getMessage() : 'Erro! Não foi possível atualizar este usuário. Por favor, procure o administrador do sistema'
             );
 
         }finally{
@@ -188,7 +276,12 @@ class UsuarioController extends Controller
             DB::beginTransaction();
 
             if(@$request->id != 31)
-            {
+            {   
+
+                $dados_usuario = DB::table('usuarios')->where('id_usuario', $request->id)->first();
+
+                Storage::disk('foto_usuario')->delete($dados_usuario->foto_perfil);
+
                 Usuario::where('id_usuario', '=', $request->id)->delete();
             }
 

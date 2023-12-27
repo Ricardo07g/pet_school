@@ -9,7 +9,7 @@ use App\Models\Pessoa;
 
 class PessoaController extends Controller
 {   
-    private $debug = true;
+    private $debug = false;
 
     private function index()
     {
@@ -233,7 +233,7 @@ class PessoaController extends Controller
         }catch (\Throwable $e) {
             DB::rollback();
 
-            $retorno = ['status' => 'erro', 'msg'=> ($this->$debug) ? $e->getMessage() : 'Erro! Não foi possível remover esta pessoa. Por favor, procure o administrador do sistema.', 'id' => $request->id];
+            $retorno = ['status' => 'erro', 'msg'=> ($this->debug) ? $e->getMessage() : 'Erro! Não foi possível remover esta pessoa. Por favor, procure o administrador do sistema.', 'id' => $request->id];
         }finally{
 
             return response()->json($retorno);

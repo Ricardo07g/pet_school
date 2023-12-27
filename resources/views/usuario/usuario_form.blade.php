@@ -9,17 +9,35 @@
     </div>
     
     <div class="content-page">
-        <form class="row g-3" id="form-usuario" action="<?php echo !empty($_GET['i']) ? '/usuario/edita/'.$_GET['i'].'' : '/usuario/novo';?>" method="POST">
+        <form class="row g-3" id="form-usuario" action="<?php echo !empty($_GET['i']) ? '/usuario/edita/'.$_GET['i'].'' : '/usuario/novo';?>" method="POST"  enctype="multipart/form-data" >
             @csrf
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-4 d-flex justify-content-left">
+                        <img id="displaySelectedImage" src="<?php echo !empty($_GET['i']) ? '/system/images/foto_usuario/'.$usuario->foto_perfil : '/system/images/foto_usuario/generic_user.png'; ?>" class="img-thumbnail" alt="example placeholder" style="width: 200px; height: 200px;" />
+                    </div>
+                    <div class="mb-4 d-flex justify-content-left" style="margin: -20px 0px 10px 0px !important;">
+                        <span id="foto_checagem" class="checagem">teste</span>
+                    </div>
+                    <div class="d-flex justify-content-left" style="margin-top: -10px;">
+                        <a class="btn btn-blue btn-rounded" >
+                            <label class="form-label text-white m-1" for="foto_perfil">Editar foto de perfil</label>
+                            <input type="file" class="form-control d-none" id="foto_perfil" name="foto_perfil"/>
+                            <input type="hidden" class="form-control d-none" id="foto_perfil_tamanho" name="foto_perfil_tamanho"/>
+                            <input type="hidden" class="form-control d-none" id="foto_perfil_extensao" name="foto_perfil_tamanho"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
             <div class="row">
             <div class="col-md-6">
                     <label for="inputNome" class="form-label">Nome*:</label>
-                    <input type="text" class="form-control" id="nome" name="nome" value="<?php echo !empty($_GET['i']) ? $usuario->nome : NULL ; ?>" pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256">
+                    <input type="text" class="form-control" id="nome" name="nome" value="<?php echo !empty($_GET['i']) ? @$usuario->nome : NULL ; ?>" pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256">
                     <span id="nome_checagem" class="checagem"></span> 
                 </div>
                 <div class="col-md-6">
                     <label for="inputSobrenome" class="form-label">Sobrenome*:</label>
-                    <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="<?php echo !empty($_GET['i']) ? $usuario->sobrenome : NULL ; ?>" pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256">
+                    <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="<?php echo !empty($_GET['i']) ? @$usuario->sobrenome : NULL ; ?>" pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$" maxlength="256">
                     <span id="sobrenome_checagem" class="checagem"></span> 
                 </div>
             </div>
@@ -27,13 +45,13 @@
             <div class="row">
                 <div class="col-md-3">
                     <label for="inputDt_nascimento" class="form-label">Data de Nascimento*:</label>
-                    <input type="date" class="form-control" id="dt_nascimento" name="dt_nascimento" value="<?php echo !empty($_GET['i']) ? $usuario->dt_nascimento : NULL ; ?>">
+                    <input type="date" class="form-control" id="dt_nascimento" name="dt_nascimento" value="<?php echo !empty($_GET['i']) ? @$usuario->dt_nascimento : NULL ; ?>">
                     <span id="dt_nascimento_checagem" class="checagem"></span> 
                 </div>
 
                 <div class="col-md-3">
                     <label for="inputCPF" class="form-label">CPF*:</label>
-                    <input type="text" class="form-control" id="cpf" name="cpf" placeholder="" value="<?php echo !empty($_GET['i']) ? $usuario->cpf : NULL ; ?>" <?php echo !empty($_GET['i']) ? 'disabled' : ''; ?> >
+                    <input type="text" class="form-control" id="cpf" name="cpf" placeholder="" value="<?php echo !empty($_GET['i']) ? @$usuario->cpf : NULL ; ?>">
                     <span id="cpf_checagem" class="checagem"></span> 
                 </div>
                 <div class="col-md-6">
@@ -165,6 +183,10 @@
                 }
             });
 
+            $("#foto_perfil").on("change", function(){
+                  displaySelectedImage(event, 'displaySelectedImage');
+            });
+
         });
 
         function validacao_campos_formulario()
@@ -179,6 +201,7 @@
             $("#senha_checagem").html("");
             $("#nova_senha_checagem").html("");
             $("#email_checagem").html("");
+            $("#foto_checagem").html("");
 
             if(typeof $('#cpf').val() == 'undefined' || $('#cpf').val() == "")
             {   
@@ -273,8 +296,6 @@
 
                 const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i;
 
-                console.log('Regex email: ', emailRegex.test($('#email').val()));
-
                 if(emailRegex.test($('#email').val()) == true)
                 {
                     try
@@ -342,8 +363,6 @@
 
                     let forca = valida_forca_senha($('#senha').val());
 
-                    console.log("forca da senha :", forca);
-
                     if(forca.forca  < 4)
                     {
                         $("#senha_checagem").html(forca.mensagem);
@@ -358,8 +377,6 @@
                 {
                     let forca = valida_forca_senha($('#nova_senha').val());
 
-                     console.log("forca da senha :", forca);
-
                     if(forca.forca  < 4)
                     {
                         $("#nova_senha_checagem").html(forca.mensagem);
@@ -370,7 +387,25 @@
 
             @endif
 
-            console.log("erros : ",erros);
+            if(typeof $('#foto_perfil').val() != 'undefined' && $('#foto_perfil').val() != "")
+            {   
+                let extencoes = ['jpeg', 'png', 'jpg', 'gif'];
+
+                if($('#foto_perfil_tamanho').val() > 2048)
+                {
+                    $("#foto_checagem").html("O tamanho máximo permitido para o arquivo é de 2MB.");
+                    $("#foto_checagem").css("display", "block");
+                    erros++;
+                }
+
+                if(extencoes.includes($('#foto_perfil_extensao').val()) == false)
+                {
+                    $("#foto_checagem").html("O arquivo deve ter uma das seguintes extensões: jpeg, png, jpg, gif.");
+                    $("#foto_checagem").css("display", "block");
+                    erros++;
+                }
+            }
+
             return (erros == 0) ? true : false;
         }
 
@@ -478,6 +513,40 @@
             return {forca: forca, mensagem: mensagens};
         }
 
+        function displaySelectedImage(event, elementId)
+        {
+            const selectedImage = $('#' + elementId)[0];
+            const fileInput = event.target;
 
+            if (fileInput.files && fileInput.files[0])
+            {
+                const file = fileInput.files[0];
+
+                // Verifica o tamanho do arquivo em bytes
+                const fileSize = file.size;
+
+                // Converte o tamanho para kilobytes
+                const fileSizeInKB = fileSize / 1024;
+
+                $('#foto_perfil_tamanho').val(fileSizeInKB);
+
+                // Obtém o nome do arquivo
+                const fileName = file.name;
+
+                // Extrai a extensão do arquivo
+                const fileExtension = fileName.split('.').pop();
+
+                $('#foto_perfil_extensao').val(fileExtension);
+
+                const reader = new FileReader();
+
+                reader.onload = function(e)
+                {
+                    selectedImage.src = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
     </script> 
 @endsection

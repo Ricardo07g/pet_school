@@ -39,7 +39,11 @@
     <div class="wrapper d-flex align-items-stretch">
 		<nav id="sidebar">
 		    <div class="p-4 pt-5">
-		  		<a href="#" class="img logo rounded-circle mb-5" style="background-image: url(/system/images/logo.jpg);"></a>
+		  		<a 
+                    href="<?php echo '/usuario?i='.auth()->user()->id_usuario; ?>"
+                    class="img logo rounded-circle mb-5"
+                    style="background-image: url('<?php echo (!empty(auth()->user()->foto_perfil) ? "/system/images/foto_usuario/".auth()->user()->foto_perfil : "/system/images/foto_usuario/generic_user.png"); ?>');"
+                ></a>
                 <ul class="list-unstyled components mb-5">
                 <li>
                     <a href="/inicio">Início</a>
@@ -64,14 +68,19 @@
                 <li class="active">
                     <a href="#secretariaSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Secretaria</a>
                     <ul class="collapse list-unstyled" id="secretariaSubmenu">
+                    <!--
                     <li>
-                        <a href="#">Tutores</a>
+                        <a href="#">Tutores (Em Breve)</a>
+                    </li>
+                    -->
+                    <li>
+                        <a href="#">Pets (Em Breve)</a>
                     </li>
                     <li>
-                        <a href="#">Pets</a>
+                        <a href="#">Turmas (Em Breve)</a>
                     </li>
                     <li>
-                        <a href="#">Matrículas</a>
+                        <a href="#">Matrículas (Em Breve)</a>
                     </li>
                     </ul>
                 </li>

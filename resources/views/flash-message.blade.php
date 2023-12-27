@@ -18,6 +18,7 @@
     class="alert alert-danger alert-block"
     x-data="{show: true}"
     x-show="show"
+    style="text-align:center;"
 >
     <button type="button" class="close" data-dismiss="alert">×</button>    
     <strong>{{ $message }}</strong>
