@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'local'),
+    'default' => env('FILESYSTEM_DISK', 'foto_usuario'),
 
     /*
     |--------------------------------------------------------------------------
@@ -44,12 +44,15 @@ return [
             'throw' => false,
         ],
 
-        'foto_usuario' => [
+    
+        'images_user' => [
             'driver' => 'local',
-            'root' => public_path('system/images/foto_usuario/'),
-            'url' => env('APP_URL').'/storage',
+            'root' => public_path('fotos_sistema'),
+            'url' => env('APP_URL').'/public',
             'visibility' => 'public',
+            'throw' => false,
         ],
+
 
         's3' => [
             'driver' => 's3',

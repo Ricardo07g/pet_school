@@ -42,7 +42,7 @@
 		  		<a 
                     href="<?php echo '/usuario?i='.auth()->user()->id_usuario; ?>"
                     class="img logo rounded-circle mb-5"
-                    style="background-image: url('<?php echo (!empty(auth()->user()->foto_perfil) ? "/system/images/foto_usuario/".auth()->user()->foto_perfil : "/system/images/foto_usuario/generic_user.png"); ?>');"
+                    style="background-image: url('<?php echo (!empty(auth()->user()->foto_perfil) ? "/system/images/sistema/usuarios/".auth()->user()->foto_perfil : "/system/images/sistema/usuarios/generic_user.png"); ?>');"
                 ></a>
                 <ul class="list-unstyled components mb-5">
                 <li>

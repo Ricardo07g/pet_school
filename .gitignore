@@ -2,7 +2,11 @@
 /public/build
 /public/hot
 /public/storage
+/public/foto_sistema
+/public/foto_usuario/
+/public/system/images/foto_usuario/*
 /storage/*.key
+/storage
 /vendor
 .env
 .env.backup

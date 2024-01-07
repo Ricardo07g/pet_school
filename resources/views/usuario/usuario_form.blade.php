@@ -14,7 +14,8 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-4 d-flex justify-content-left">
-                        <img id="displaySelectedImage" src="<?php echo !empty($_GET['i']) ? '/system/images/foto_usuario/'.$usuario->foto_perfil : '/system/images/foto_usuario/generic_user.png'; ?>" class="img-thumbnail" alt="example placeholder" style="width: 200px; height: 200px;" />
+                        <!-- '/system/images/foto_usuario/'.$usuario->foto_perfil -->
+                        <img id="displaySelectedImage" src="<?php echo !empty($_GET['i']) ? asset('/system/images/sistema/usuarios/'.$usuario->foto_perfil) : '/system/images/sistema/usuarios/generic_user.png'; ?>" class="img-thumbnail" alt="example placeholder" style="width: 200px; height: 200px;" />
                     </div>
                     <div class="mb-4 d-flex justify-content-left" style="margin: -20px 0px 10px 0px !important;">
                         <span id="foto_checagem" class="checagem">teste</span>

@@ -12,7 +12,7 @@ use App\Models\Usuario;
 
 class UsuarioController extends Controller
 {   
-    private $debug = false;
+    private $debug = true;
 
     private function index()
     {
@@ -127,9 +127,8 @@ class UsuarioController extends Controller
                     // Gere um nome único para a imagem
                     $nomeUnico = uniqid() . '_' . time() . '.' . $imagemTemporaria->extension();
 
-                    // Salve a imagem no armazenamento público
-                    //$caminhoImagem = $imagemTemporaria->storeAs('system/images/foto_usuario/', $nomeUnico, 'public');
-                    $caminhoImagem = $imagemTemporaria->move(public_path('system/images/foto_usuario/'), $nomeUnico);
+                    // Salve a imagem no armazenamento
+                    $caminhoImagem = $imagemTemporaria->storeAs('', $nomeUnico, 'images_user');
 
                 }catch(\Throwable $e){
                     $nomeUnico = NULL;
@@ -199,17 +198,16 @@ class UsuarioController extends Controller
                         // Gere um nome único para a imagem
                         $nomeUnico = uniqid() . '_' . time() . '.' . $imagemTemporaria->extension();
 
-                        // Salve a imagem no armazenamento público
-                        //$caminhoImagem = $imagemTemporaria->storeAs('system/images/foto_usuario/', $nomeUnico, 'public');
-                        $caminhoImagem = $imagemTemporaria->move(public_path('system/images/foto_usuario/'), $nomeUnico);
+                        // Salve a imagem no armazenamento
+                        $caminhoImagem = $imagemTemporaria->storeAs('', $nomeUnico, 'images_user');
 
-                        if(!empty($dados_usuario->foto_perfil) && Storage::disk('foto_usuario')->exists($dados_usuario->foto_perfil) == true)
+                        if(!empty($dados_usuario->foto_perfil) && Storage::disk('images_user')->exists($dados_usuario->foto_perfil) == true)
                         {
-                            Storage::disk('foto_usuario')->delete(@$dados_usuario->foto_perfil);
+                            Storage::disk('images_user')->delete(@$dados_usuario->foto_perfil);
                         }
 
                     }catch(\Throwable $e){
-                        $nomeUnico = NULL;
+                       $nomeUnico = NULL;
                     }
                 }
 
@@ -280,7 +278,10 @@ class UsuarioController extends Controller
 
                 $dados_usuario = DB::table('usuarios')->where('id_usuario', $request->id)->first();
 
-                Storage::disk('foto_usuario')->delete($dados_usuario->foto_perfil);
+                if(!empty($dados_usuario->foto_perfil))
+                {
+                    Storage::disk('images_user')->delete($dados_usuario->foto_perfil);
+                }
 
                 Usuario::where('id_usuario', '=', $request->id)->delete();
             }
