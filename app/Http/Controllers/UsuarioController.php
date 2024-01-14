@@ -135,7 +135,7 @@ class UsuarioController extends Controller
                 }
             }
 
-            $usuario->foto_perfil = $nomeUnico;
+            $usuario->foto_perfil = @$nomeUnico;
 
             $usuario->save();
 

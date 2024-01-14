@@ -78,6 +78,7 @@ class FuncionarioController extends Controller
                     pessoa.cpf,
                     CONCAT(pessoa.nome, " ", pessoa.sobrenome) AS nome_completo,
                     pessoa.dt_nascimento,
+                    pessoa.foto_perfil,
                     funcionario.id_cargo,
                     funcionario.ativo
                 ')
@@ -94,7 +95,8 @@ class FuncionarioController extends Controller
                 pessoa.id_pessoa,
                 CONCAT(pessoa.nome, " ", pessoa.sobrenome) AS nome_completo,
                 pessoa.cpf,
-                pessoa.dt_nascimento
+                pessoa.dt_nascimento,
+                pessoa.foto_perfil
             ')
             ->leftJoin('funcionario', 'pessoa.id_pessoa', '=', 'funcionario.id_pessoa')
             ->whereNull('funcionario.id_pessoa')

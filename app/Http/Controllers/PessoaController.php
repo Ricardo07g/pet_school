@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Pessoa;
 
 class PessoaController extends Controller
@@ -75,6 +76,7 @@ class PessoaController extends Controller
                     pessoa.cpf,
                     pessoa.nome,
                     pessoa.sobrenome,
+                    pessoa.foto_perfil,
                     pessoa.dt_nascimento,
                     pessoa.email,
                     pessoa.telefone_notificacao,
@@ -96,6 +98,8 @@ class PessoaController extends Controller
                 ->leftJoin('estdo_civil', 'estdo_civil.id_estdo_civil', '=', 'pessoa.id_estdo_civil')
                 ->leftJoin('escolaridade', 'escolaridade.id_escolaridade', '=', 'pessoa.id_escolaridade')
                 ->where('pessoa.id_pessoa', request('i'))->first();
+
+                $dados_pessoa->foto_perfil = (!empty($dados_pessoa->foto_perfil)) ? $dados_pessoa->foto_perfil : 'generic_user.png';
             }
 
         } catch (\Throwable $e) {
@@ -142,6 +146,26 @@ class PessoaController extends Controller
             $pessoa->end_bairro             = $request->bairro;
             $pessoa->end_uf                 = $request->estado;
             $pessoa->end_municipio          = $request->municipio;
+
+            if(!empty(@$request->foto_perfil))
+            {
+                try
+                {  
+                    // Obtenha o caminho temporário do arquivo carregado
+                    $imagemTemporaria = $request->file('foto_perfil');
+
+                    // Gere um nome único para a imagem
+                    $nomeUnico = uniqid() . '_' . time() . '.' . $imagemTemporaria->extension();
+
+                    // Salve a imagem no armazenamento
+                    $caminhoImagem = $imagemTemporaria->storeAs('', $nomeUnico, 'images_people');
+
+                }catch(\Throwable $e){
+                    $nomeUnico = NULL;
+                }
+            }
+
+            $pessoa->foto_perfil = @$nomeUnico;
             
             $pessoa->save();
 
@@ -175,9 +199,39 @@ class PessoaController extends Controller
         {
             DB::beginTransaction();
 
+            $dados_pessoa = DB::table('pessoa')->where('id_pessoa', $id_pessoa)->first();
+
+            $nomeUnico = @$dados_pessoa->foto_perfil;
+
+            if(!empty(@$request->foto_perfil))
+            {
+                try
+                {  
+                    // Obtenha o caminho temporário do arquivo carregado
+                    $imagemTemporaria = $request->file('foto_perfil');
+
+                    // Gere um nome único para a imagem
+                    $nomeUnico = uniqid() . '_' . time() . '.' . $imagemTemporaria->extension();
+
+                    // Salve a imagem no armazenamento
+                    $caminhoImagem = $imagemTemporaria->storeAs('', $nomeUnico, 'images_people');
+
+                    if(!empty($dados_pessoa->foto_perfil) && Storage::disk('images_people')->exists($dados_pessoa->foto_perfil) == true)
+                    {
+                        Storage::disk('images_people')->delete(@$dados_pessoa->foto_perfil);
+                    }
+
+                }catch(\Throwable $e){
+                   $nomeUnico = NULL;
+                }
+            }
+
+            $request->foto_perfil = @$nomeUnico;
+
             pessoa::where('id_pessoa', '=', $id_pessoa)->update([  
                     'nome' => $request->nome,
                     'sobrenome' => $request->sobrenome,
+                    'foto_perfil' => $request->foto_perfil,
                     'dt_nascimento' => $request->dt_nascimento,
                     'cpf'  => $request->cpf,
                     'email'  => $request->email,
@@ -193,7 +247,8 @@ class PessoaController extends Controller
                     'end_complemento' => $request->complemento,
                     'end_bairro' => $request->bairro,
                     'end_uf' => $request->estado,
-                    'end_municipio'  => $request->municipio
+                    'end_municipio'  => $request->municipio,
+                    'foto_perfil' => $nomeUnico
                 ]);
             
             DB::commit();
@@ -225,6 +280,12 @@ class PessoaController extends Controller
         try
         {
             DB::beginTransaction();
+            $dados_pessoa = DB::table('pessoa')->where('id_pessoa', $request->id)->first();
+
+            if(!empty($dados_pessoa->foto_perfil))
+            {
+                Storage::disk('images_people')->delete($dados_pessoa->foto_perfil);
+            }
             pessoa::where('id_pessoa', '=', $request->id)->delete();
             DB::commit();
 

@@ -14,7 +14,6 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-4 d-flex justify-content-left">
-                        <!-- '/system/images/foto_usuario/'.$usuario->foto_perfil -->
                         <img id="displaySelectedImage" src="<?php echo !empty($_GET['i']) ? asset('/system/images/sistema/usuarios/'.$usuario->foto_perfil) : '/system/images/sistema/usuarios/generic_user.png'; ?>" class="img-thumbnail" alt="example placeholder" style="width: 200px; height: 200px;" />
                     </div>
                     <div class="mb-4 d-flex justify-content-left" style="margin: -20px 0px 10px 0px !important;">
@@ -25,7 +24,7 @@
                             <label class="form-label text-white m-1" for="foto_perfil">Editar foto de perfil</label>
                             <input type="file" class="form-control d-none" id="foto_perfil" name="foto_perfil"/>
                             <input type="hidden" class="form-control d-none" id="foto_perfil_tamanho" name="foto_perfil_tamanho"/>
-                            <input type="hidden" class="form-control d-none" id="foto_perfil_extensao" name="foto_perfil_tamanho"/>
+                            <input type="hidden" class="form-control d-none" id="foto_perfil_extensao" name="foto_perfil_extensao"/>
                         </a>
                     </div>
                 </div>

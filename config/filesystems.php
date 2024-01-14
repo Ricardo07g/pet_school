@@ -53,6 +53,14 @@ return [
             'throw' => false,
         ],
 
+        'images_people' => [
+            'driver' => 'local',
+            'root' => public_path('fotos_sistema'),
+            'url' => env('APP_URL').'/public',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
 
         's3' => [
             'driver' => 's3',

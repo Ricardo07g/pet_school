@@ -30,6 +30,7 @@
                         data-nome = "<?php echo $pessoa->nome_completo; ?>"
                         data-cpf = "<?php echo $pessoa->cpf; ?>"
                         data-dtnascimento = "<?php echo $pessoa->dt_nascimento; ?>"
+                        data-fotoperfil = "<?php echo $pessoa->foto_perfil; ?>"
                     >
                     @endforeach 
                 </datalist>
@@ -38,6 +39,18 @@
             </div>
             @endif
             <div id="div_content" class="<?php echo (empty(@$_GET['i'])) ? 'invisivel': ''; ?>" >
+
+                 <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4 d-flex justify-content-left">
+                            <img id="displaySelectedImage" src="<?php echo !empty($_GET['i']) ? asset('/system/images/sistema/pessoas/'.$funcionario->foto_perfil) : '/system/images/sistema/pessoas/generic_user.png'; ?>" class="img-thumbnail" alt="example placeholder" style="width: 200px; height: 200px;" />
+                        </div>
+                        <div class="mb-4 d-flex justify-content-left" style="margin: -20px 0px 10px 0px !important;">
+                            <span id="foto_checagem" class="checagem">teste</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-md-3">
                         <label for="inputCPF" class="form-label">cpf</label>
@@ -147,6 +160,7 @@
               if(el.value.trim() != '')
               {
                 var opSelected = dl.querySelector(`[value="${el.value}"]`);
+                var imgSelected = '/system/images/sistema/pessoas/generic_user.png';
 
                 $("#cpf").val(opSelected.dataset.cpf);
                 $("#cpf").attr('disabled',true);
@@ -158,6 +172,10 @@
                 $("#dt_nascimento").attr('disabled',true);
                 
                 $("#id_pessoa").val(opSelected.dataset.idpessoa);
+
+                imgSelected = (opSelected.dataset.fotoperfil != "" && opSelected.dataset.fotoperfil != null) ? "/system/images/sistema/pessoas/"+opSelected.dataset.fotoperfil : imgSelected;
+                $("#displaySelectedImage").attr("src", imgSelected);
+
                 $("#pessoaDataList").val('');
                 $("#div_content").removeClass('invisivel');
              }
